@@ -21,7 +21,7 @@ module.exports = function(grunt) {
           src: 'index.css',
           dest: 'build/index.css'
         },{
-          src: 'main.js',
+          src: 'server/main.js',
           dest: 'build/main.js'
         },{
           src: 'manifest.json',
