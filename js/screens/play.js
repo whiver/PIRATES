@@ -20,6 +20,9 @@ game.PlayScreen = me.ScreenObject.extend({
      *  action to perform on state change
      */
     onResetEvent: function() {
+		//Map init
+        me.levelDirector.loadLevel("area01");
+		
         // reset the score
         game.data.score = 0;
 
