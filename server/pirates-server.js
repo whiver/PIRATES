@@ -16,22 +16,24 @@
     along with PIRATES.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 
+//---------------------------- Parameters
+const PORT = 8000;
+
 //---------------------- Import required modules
-var express = require('express');
-var app = express();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
+var express     = require('express');
+var app         = express();
+var server      = require('http').Server(app);
+var io          = require('socket.io')(server);
+var path        = require('path');
 
 //------------------- Serve the HTML/Js client files
+var basepath = path.normalize(__dirname + '/../');
 app.get('/', function (req, res) {
     res.setHeader('Content-type', 'text/html');
-    res.sendFile(__dirname + '/../index.html');
+    res.sendFile(basepath + '/index.html');
 })
 
-.get('/app.min.js', function (req, res) {
-    res.setHeader('Content-type', 'text/javascript');
-    res.sendFile(__dirname + '/../js/app.min.js');
-});
+app.use(express.static(basepath + '/data'));
 
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
@@ -48,6 +50,6 @@ io.on('connection', function (socket) {
 });
 
 //-------------------- Initialize the connection
-server.listen(80, function() {
-    console.log('listening on *:80');
+server.listen(PORT, function() {
+    console.log('listening on *:' + PORT);
 });
