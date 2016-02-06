@@ -60,12 +60,19 @@ var game = {
 
     // add our player entity in the entity pool
     me.pool.register("mainPlayer", game.Player);
+    me.pool.register("player2", game.OtherPlayer);
 
     //Key mappings
     me.input.bindKey(me.input.KEY.LEFT,  "left");
     me.input.bindKey(me.input.KEY.RIGHT, "right");
     me.input.bindKey(me.input.KEY.UP,  "up");
     me.input.bindKey(me.input.KEY.DOWN, "down");
+
+    //Only to test the second player
+    me.input.bindKey(me.input.KEY.Q,  "q");
+    me.input.bindKey(me.input.KEY.D, "d");
+    me.input.bindKey(me.input.KEY.Z,  "z");
+    me.input.bindKey(me.input.KEY.S, "s");
 
     // Start the game.
     me.state.change(me.state.PLAY);
