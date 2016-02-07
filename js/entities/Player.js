@@ -118,6 +118,11 @@ game.Player = me.Entity.extend({
   * (called when colliding with other objects)
   */
   onCollision : function (response, other) {
+    //TODO : if includes doesn't work on some browser, check https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/String/includes
+    if(other.name.includes("player")){
+      return false;
+    }
+
     // Make all other objects solid
     return true;
   }
