@@ -21,8 +21,11 @@ module.exports = function(grunt) {
           src: 'index.css',
           dest: 'build/index.css'
         },{
-          src: 'server/main.js',
+          src: 'main.js',
           dest: 'build/main.js'
+        },{
+          src: 'pirates-server.js',
+          dest: 'build/pirates-server.js'
         },{
           src: 'manifest.json',
           dest: 'build/manifest.json'
@@ -37,6 +40,9 @@ module.exports = function(grunt) {
           src: 'icons/*',
           dest: 'build/',
           expand: true
+        },{
+          src: 'server/**/*',
+          dest: 'build/'
         }]
       }
     },

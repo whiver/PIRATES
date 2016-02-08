@@ -16,8 +16,10 @@
     along with PIRATES.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 
+'use strict';
+
 //---------------------------- Parameters
-const PORT = 8000;
+var PORT = 8000;
 
 //---------------------- Import required modules
 var express     = require('express');
@@ -25,16 +27,16 @@ var app         = express();
 var server      = require('http').Server(app);
 var io          = require('socket.io')(server);
 var path        = require('path');
-var Pirates     = require('./Game');
+//var Pirates     = require('./server/Game');
 
 //------------------- Serve the HTML/Js client files
-var basepath = path.normalize(__dirname + '/../');
 app.get('/', function (req, res) {
     res.setHeader('Content-type', 'text/html');
-    res.sendFile(basepath + '/index.html');
+    res.sendFile(__dirname + '/index.html');
 });
 
-app.use(express.static(basepath + '/data'));
+app.use(express.static(__dirname + '/data/'));
+app.use(express.static(__dirname + '/js/'));
 
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
