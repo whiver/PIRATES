@@ -25,6 +25,7 @@ var app         = express();
 var server      = require('http').Server(app);
 var io          = require('socket.io')(server);
 var path        = require('path');
+var Pirates     = require('./Game');
 
 //------------------- Serve the HTML/Js client files
 var basepath = path.normalize(__dirname + '/../');
