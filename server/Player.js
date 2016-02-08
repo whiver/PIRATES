@@ -41,6 +41,8 @@
       this.points = 0;
       this.x = x;
       this.y = y;
+      this.vel.x = 0;
+      this.vel.y = 0;
     }
 
     //------------------------ Getters / Setters -------------------------------
@@ -107,6 +109,20 @@
       }
 
       this.points = newScore;
+    }
+
+    /**
+     * Velocity - Get or Set the velocity of the player
+     *
+     * @param  {Object} newVel the new velocity to set
+     * @return {Object}        The velocity if 0 args, nothing if 1 arg
+     */
+    Velocity(newVel){
+      if(newVel === undefined){
+        return this.vel;
+      }
+
+      this.vel = newVel;
     }
     //--------------------------------------------------------------------------
   }
