@@ -31,13 +31,13 @@ var basepath = path.normalize(__dirname + '/../');
 app.get('/', function (req, res) {
     res.setHeader('Content-type', 'text/html');
     res.sendFile(basepath + '/index.html');
-})
+});
 
 app.use(express.static(basepath + '/data'));
 
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
-    
+
     // Allow a player to join the game and set his pseudo
     socket.on('join', function (pseudo) {
         socket.pseudo = pseudo;
@@ -45,7 +45,7 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('joined', pseudo);
         // TODO Send the initial position of the player
     });
-    
+
     // TODO Update players stats (position, items & life)
 });
 
