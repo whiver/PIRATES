@@ -84,7 +84,8 @@
     /**
      * CurrentAnimation - Get or set the current animation of the player
      *
-     * @return {String or Void} The animation if 0 args, nothing if 1 arg
+     * @param newANimation {String} The newAnimation to set
+     * @return {String | Void} The animation if 0 args, nothing if 1 arg
      */
     CurrentAnimation(newAnimation){
       if(newAnimation === undefined){
@@ -97,7 +98,8 @@
     /**
      * Points - Get or set the player's score
      *
-     * @return {int or void} The score if 0 args, nothing if 1 arg
+     * @param {int} newScore the new score to set
+     * @return {int | void} The score if 0 args, nothing if 1 arg
      */
     Points(newScore){
       if(newScore === undefined){
