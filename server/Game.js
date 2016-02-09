@@ -63,5 +63,5 @@
 
   Game.NbPlayers = 0;
 
-  exports = Game;
+  exports.Game = Game;
 })();

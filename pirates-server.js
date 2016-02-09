@@ -28,7 +28,7 @@ var serveStatic = require('serve-static');
 var server      = require('http').Server(app);
 var io          = require('socket.io')(server);
 var path        = require('path');
-var Game        = require('./server/Game'); //import the class Game
+var Pirates     = require('./server/Game'); //import the class Game
 
 //------------------- Serve the HTML/Js client files
 app.get('/', function (req, res) {
@@ -46,7 +46,7 @@ app.use("/js", serveStatic(__dirname + '/js/'));
 app.use("/lib", serveStatic(__dirname + '/lib/'));
 app.use("/build", serveStatic(__dirname + '/build/'));
 
-var game = new Game();
+var game = new Pirates.Game();
 
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
@@ -60,6 +60,7 @@ io.on('connection', function (socket) {
     if(idPlayer !== -1){
       console.log('Player ' + pseudo + ' joined the game.');
       socket.broadcast.emit('joined', game.Get(idPlayer));
+      socket.emit('init', game.Get(idPlayer));
     }
     else{
       //TODO invalid pseudo bla bla bla...
