@@ -38,11 +38,12 @@
      * @return {int} the player id
      */
     AddPlayer(pseudo){
+      var id = -1;
       //TODO check if pseudo is already defined
       //TODO make a system to locate the players in differents parts of the map
       Game.NbPlayers++;
 
-      var id = Game.NbPlayers;
+      id = Game.NbPlayers;
       this.players[id] = new Entities.Player(pseudo, id, 0, 0);
 
       return id;

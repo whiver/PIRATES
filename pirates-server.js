@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 /******************************************************************************
-    This file is part of PIRATES.
+This file is part of PIRATES.
 
-    PIRATES is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+PIRATES is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    PIRATES is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+PIRATES is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PIRATES.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with PIRATES.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 
 'use strict';
@@ -32,13 +32,13 @@ var Game        = require('./server/Game'); //import the class Game
 
 //------------------- Serve the HTML/Js client files
 app.get('/', function (req, res) {
-    res.setHeader('Content-type', 'text/html');
-    res.sendFile(__dirname + '/index.html');
+  res.setHeader('Content-type', 'text/html');
+  res.sendFile(__dirname + '/index.html');
 });
 
 app.get('/index.css', function (req, res) {
-    res.setHeader('Content-type', 'text/css');
-    res.sendFile(__dirname + '/index.css');
+  res.setHeader('Content-type', 'text/css');
+  res.sendFile(__dirname + '/index.css');
 });
 
 app.use("/data", serveStatic(__dirname + '/data/'));
@@ -46,21 +46,31 @@ app.use("/js", serveStatic(__dirname + '/js/'));
 app.use("/lib", serveStatic(__dirname + '/lib/'));
 app.use("/build", serveStatic(__dirname + '/build/'));
 
+var game = new Game();
+
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
 
-    // Allow a player to join the game and set his pseudo
-    socket.on('join', function (pseudo) {
-        socket.pseudo = pseudo;
-        console.log('Player ' + pseudo + ' joined the game.');
-        socket.broadcast.emit('joined', pseudo);
-        // TODO Send the initial position of the player
-    });
+  // Allow a player to join the game and set his pseudo
+  socket.on('join', function (pseudo) {
+    socket.pseudo = pseudo;
 
-    // TODO Update players stats (position, items & life)
+    var idPlayer = game.AddPlayer(pseudo);
+
+    if(idPlayer !== -1){
+      console.log('Player ' + pseudo + ' joined the game.');
+      socket.broadcast.emit('joined', game.Get(idPlayer));
+    }
+    else{
+      //TODO invalid pseudo bla bla bla...
+    }
+
+  });
+
+  // TODO Update players stats (position, items & life)
 });
 
 //-------------------- Initialize the connection
 server.listen(PORT, function() {
-    console.log('listening on *:' + PORT);
+  console.log('listening on *:' + PORT);
 });
