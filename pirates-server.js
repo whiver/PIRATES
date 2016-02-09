@@ -24,10 +24,11 @@ var PORT = 8000;
 //---------------------- Import required modules
 var express     = require('express');
 var app         = express();
+var serveStatic = require('serve-static');
 var server      = require('http').Server(app);
 var io          = require('socket.io')(server);
 var path        = require('path');
-var Game        = require('./server/Game');
+var Pirates     = require('./server/Game');
 
 //------------------- Serve the HTML/Js client files
 app.get('/', function (req, res) {
@@ -35,8 +36,15 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-app.use(express.static(__dirname + '/data/'));
-app.use(express.static(__dirname + '/js/'));
+app.get('/index.css', function (req, res) {
+    res.setHeader('Content-type', 'text/css');
+    res.sendFile(__dirname + '/index.css');
+});
+
+app.use("/data", serveStatic(__dirname + '/data/'));
+app.use("/js", serveStatic(__dirname + '/js/'));
+app.use("/lib", serveStatic(__dirname + '/lib/'));
+app.use("/build", serveStatic(__dirname + '/build/'));
 
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
