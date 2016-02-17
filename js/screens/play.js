@@ -26,6 +26,14 @@ game.PlayScreen = me.ScreenObject.extend({
         // reset the score
         game.data.score = 0;
 
+        // Add the players
+        this.players = {
+            "wsh": new game.Player(170, 235, {frameheight: 32, framewidth: 30, image: "pirates", width: 30, height:32}),
+            "adri": new game.OtherPlayer(500, 235, {frameheight: 32, framewidth: 30, image: "pirates", width: 30, height:32})
+        }
+        me.game.world.addChild(this.players.wsh);
+        me.game.world.addChild(this.players.adri);
+
         // add our HUD to the game world
         this.HUD = new game.HUD.Container();
         me.game.world.addChild(this.HUD);

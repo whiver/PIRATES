@@ -58,10 +58,6 @@ var game = {
     me.state.set(me.state.MENU, new game.TitleScreen());
     me.state.set(me.state.PLAY, new game.PlayScreen());
 
-    // add our player entity in the entity pool
-    me.pool.register("mainPlayer", game.Player);
-    me.pool.register("player2", game.OtherPlayer);
-
     //Key mappings
     me.input.bindKey(me.input.KEY.LEFT,  "left");
     me.input.bindKey(me.input.KEY.RIGHT, "right");
