@@ -118,7 +118,7 @@ game.OtherPlayer = me.Entity.extend({
   * (called when colliding with other objects)
   */
   onCollision : function (response, other) {
-    if(other.name == "mainPlayer"){
+    if(other instanceof game.Player || other instanceof game.OtherPlayer){
       return false;
     }
     // Make all other objects solid
