@@ -15,8 +15,21 @@
         <link rel="manifest" href="manifest.json">
     </head>
     <body>
+      <div class="overPanel">
+        <div class="dialog">
+          Pseudo :&nbsp<input id="pseudo" type="text" name="pseudo"/>&nbsp
+          <input id="button" type="submit" value="Go!">
+          <div id="error">ma bite</div>
+        </div>
+      </div>
         <!-- Canvas placeholder -->
         <div id="screen"></div>
+
+        <!-- Socket io -->
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+          var socket = io();
+        </script>
 
         <!-- melonJS Library -->
         <!-- build:js js/app.min.js -->
@@ -53,9 +66,21 @@
             });
         </script>
 
-        <script src="/socket.io/socket.io.js"></script>
         <script>
-          var socket = io();
+          var button = document.getElementById("button");
+          var pseudo = document.getElementById("pseudo");
+
+          button.addEventListener("click", function(){
+            socket.emit("join", pseudo.value);
+          });
+
+          socket.on('pseudoError', function(msg){
+            if(msg === 'alreadyGiven'){
+              var error = document.getElementById("error")
+              error.innerText = "Error : Pseudo already taken !";
+              error.style.display = "block";
+            }
+          });
         </script>
     </body>
 </html>

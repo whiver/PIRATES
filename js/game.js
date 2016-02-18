@@ -58,19 +58,43 @@ var game = {
     me.state.set(me.state.MENU, new game.TitleScreen());
     me.state.set(me.state.PLAY, new game.PlayScreen());
 
-    //Key mappings
-    me.input.bindKey(me.input.KEY.LEFT,  "left");
-    me.input.bindKey(me.input.KEY.RIGHT, "right");
-    me.input.bindKey(me.input.KEY.UP,  "up");
-    me.input.bindKey(me.input.KEY.DOWN, "down");
+    //First, we wait for all the players to connect
+    var players = {};
+    var playerId;
 
-    //Only to test the second player
-    me.input.bindKey(me.input.KEY.Q,  "q");
-    me.input.bindKey(me.input.KEY.D, "d");
-    me.input.bindKey(me.input.KEY.Z,  "z");
-    me.input.bindKey(me.input.KEY.S, "s");
+    socket.on("initId", function(id){
+      playerId = id;
 
-    // Start the game.
-    me.state.change(me.state.PLAY);
+      socket.emit("initIdDone");
+    });
+
+    socket.on("init", function(param){
+      for(var i in param){
+        var p = param[i];
+
+        if(p.id === playerId){
+          players[p.id] = new game.Player(p.pos.x, p.pos.y, {frameheight: 32, framewidth: 30, image: "pirates", width: 30, height:32});
+        }
+        else{
+          players[p.id] = new game.OtherPlayer(p.pos.x, p.pos.y, {frameheight: 32, framewidth: 30, image: "pirates", width: 30, height:32});
+        }
+      }
+
+      socket.emit('ready');
+    });
+
+    //Then, we start the game
+    socket.on('start', function(){
+      //Key mappings
+      me.input.bindKey(me.input.KEY.LEFT,  "left");
+      me.input.bindKey(me.input.KEY.RIGHT, "right");
+      me.input.bindKey(me.input.KEY.UP,  "up");
+      me.input.bindKey(me.input.KEY.DOWN, "down");
+
+      // Start the game (pass 2 args (players & playerId) to the onResetEvent function of the play screen)
+      me.state.change(me.state.PLAY, players, playerId);
+
+      document.getElementsByClassName("overPanel")[0].style.display = "none";
+    });
   }
 };

@@ -47,28 +47,63 @@ app.use("/lib", serveStatic(__dirname + '/lib/'));
 app.use("/build", serveStatic(__dirname + '/build/'));
 
 var game = new Pirates.Game();
+var nbPlayers = 0;
+var nbReady = 0;
+var toUpdate = [];
 
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
-
   // Allow a player to join the game and set his pseudo
   socket.on('join', function (pseudo) {
-    socket.pseudo = pseudo;
-
     var idPlayer = game.AddPlayer(pseudo);
 
     if(idPlayer !== -1){
       console.log('Player ' + pseudo + ' joined the game.');
-      socket.broadcast.emit('joined', game.Get(idPlayer));
-      socket.emit('init', game.Get(idPlayer));
+
+      //Give an ID to the player
+      socket.emit('initId', idPlayer);
+      nbPlayers++;
     }
     else{
-      //TODO invalid pseudo bla bla bla...
+      socket.emit('pseudoError', 'alreadyGiven');
     }
-
   });
 
-  // TODO Update players stats (position, items & life)
+  //Event received when the player have succesfully received is ID
+  socket.on('initIdDone', function(){
+    if(nbPlayers === 2){
+      //Give the players list to everyone
+      io.emit('init', game.GetList());
+    }
+  });
+
+  //Event received when a player is ready
+  socket.on('ready', function(){
+    nbReady++;
+
+    if(nbReady === 2){
+      //Start the game for everyone
+      io.emit('start');
+
+      setInterval(function(){
+        for(var i=0; i < toUpdate.length; i++){
+          toUpdate[i].emit('update', game.GetList());
+        }
+
+        toUpdate = [];
+      }, 10);
+    }
+  });
+
+  socket.on('updatePlayer', function(p){
+    var player = game.Get(p.id);
+
+    player.pos.x = p.player.x;
+    player.pos.y = p.player.y;
+    //TODO update other params
+
+    toUpdate.push(socket);
+  });
 });
 
 //-------------------- Initialize the connection

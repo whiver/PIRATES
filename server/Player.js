@@ -31,7 +31,7 @@
      * @param  {int} x the player's x coordinate
      * @param  {int} y the player's y coordinate
      */
-    constructor(pseudo, id, x, y){
+    constructor(pseudo, id, px, py){
       this.pseudo = pseudo;
       this.id = id;
       this.hp = 100;
@@ -39,10 +39,8 @@
       this.healSpeed = 0.5;
       this.currentAnimation = "stand";
       this.points = 0;
-      this.x = x;
-      this.y = y;
-      this.vel.x = 0;
-      this.vel.y = 0;
+      this.pos = {x: px, y: py};
+      this.vel = {x: 0, y: 0};
     }
 
     //------------------------ Getters / Setters -------------------------------

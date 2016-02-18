@@ -44,7 +44,7 @@
       Game.NbPlayers++;
 
       id = Game.NbPlayers;
-      this.players[id] = new Entities.Player(pseudo, id, 0, 0);
+      this.players[id] = new Entities.Player(pseudo, id, 150, 150);
 
       return id;
     }
@@ -57,6 +57,15 @@
      */
     Get(id){
       return this.players[id];
+    }
+
+    /**
+     * GetList - Get the list of players indexed by ids
+     *
+     * @return {object}  the players indexed by ids
+     */
+    GetList(){
+      return this.players;
     }
 
   }
