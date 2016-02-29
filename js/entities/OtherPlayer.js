@@ -53,54 +53,33 @@ game.OtherPlayer = me.Entity.extend({
   * update the entity
   */
   update : function (dt) {
-    //Go left
-    if (me.input.isKeyPressed('q')) {
-      // flip the sprite on horizontal axis
-      this.renderable.flipX(true);
-      // update the entity velocity
-      this.body.vel.x -= this.body.accel.x * me.timer.tick;
-      // change to the walking animation
-      if (!this.renderable.isCurrentAnimation("sideWalk")) {
-        this.renderable.setCurrentAnimation("sideWalk");
-      }
-    //Go right
-  } else if (me.input.isKeyPressed('d')) {
-      // unflip the sprite
-      this.renderable.flipX(false);
-      // update the entity velocity
-      this.body.vel.x += this.body.accel.x * me.timer.tick;
-      // change to the walking animation
-      if (!this.renderable.isCurrentAnimation("sideWalk")) {
-        this.renderable.setCurrentAnimation("sideWalk");
-      }
-    }
-    //Doesn't move on x axis
-    else {
-      this.body.vel.x = 0;
-    }
-
-    //Go up
-    if (me.input.isKeyPressed('z')){
-      this.body.vel.y -= this.body.accel.y * me.timer.tick;
-      // change to the walking animation
-      if (!this.renderable.isCurrentAnimation("upWalk") && !me.input.isKeyPressed('right') && !me.input.isKeyPressed('left')) {
-        this.renderable.setCurrentAnimation("upWalk");
-      }
-    //Go down
-  } else if (me.input.isKeyPressed('s')){
-      this.body.vel.y += this.body.accel.y * me.timer.tick;
-      // change to the walking animation
-      if (!this.renderable.isCurrentAnimation("downWalk") && !me.input.isKeyPressed('right') && !me.input.isKeyPressed('left')) {
+    if(this.body.vel.y > 0){
+      if(!this.renderable.isCurrentAnimation("downWalk")){
         this.renderable.setCurrentAnimation("downWalk");
       }
-    //Doesn't move on y axis
-    } else {
-      this.body.vel.y = 0;
     }
-
-    //Stand animation
-    if(!me.input.isKeyPressed('z') && !me.input.isKeyPressed('s') && !me.input.isKeyPressed('q') && !me.input.isKeyPressed('d')){
-      this.renderable.setCurrentAnimation("stand");
+    else if(this.body.vel.y < 0){
+      if(!this.renderable.isCurrentAnimation("upWalk")){
+        this.renderable.setCurrentAnimation("upWalk");
+      }
+    }
+    else if(this.body.vel.x > 0){
+      this.renderable.flipX(false);
+      if(!this.renderable.isCurrentAnimation("sideWalk")){
+        this.renderable.setCurrentAnimation("sideWalk");
+      }
+    }
+    else if(this.body.vel.x < 0){
+      this.renderable.flipX(true);
+      if(!this.renderable.isCurrentAnimation("sideWalk")){
+        this.renderable.setCurrentAnimation("sideWalk");
+      }
+    }
+    else
+    {
+      if(!this.renderable.isCurrentAnimation("stand")){
+        this.renderable.setCurrentAnimation("stand");
+      }
     }
 
     // apply physics to the body (this moves the entity)

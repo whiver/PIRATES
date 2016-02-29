@@ -89,10 +89,10 @@
      */
     CurrentAnimation(newAnimation){
       if(newAnimation === undefined){
-        return this.CurrentAnimation;
+        return this.currentAnimation;
       }
 
-      this.CurrentAnimation = newAnimation;
+      this.currentAnimation = newAnimation;
     }
 
     /**

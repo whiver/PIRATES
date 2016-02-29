@@ -71,7 +71,7 @@ io.on('connection', function (socket) {
 
   //Event received when the player have succesfully received is ID
   socket.on('initIdDone', function(){
-    if(nbPlayers === 2){
+    if(nbPlayers >= 2){
       //Give the players list to everyone
       io.emit('init', game.GetList());
     }
@@ -80,8 +80,7 @@ io.on('connection', function (socket) {
   //Event received when a player is ready
   socket.on('ready', function(){
     nbReady++;
-
-    if(nbReady === 2){
+    if(nbReady >= 2){
       //Start the game for everyone
       io.emit('start');
 
@@ -91,7 +90,7 @@ io.on('connection', function (socket) {
         }
 
         toUpdate = [];
-      }, 10);
+      }, 50);
     }
   });
 
@@ -100,6 +99,9 @@ io.on('connection', function (socket) {
 
     player.pos.x = p.player.x;
     player.pos.y = p.player.y;
+    player.vel.x = p.player.velX;
+    player.vel.y = p.player.velY;
+    player.currentAnimation = p.player.currentAnimation;
     //TODO update other params
 
     toUpdate.push(socket);

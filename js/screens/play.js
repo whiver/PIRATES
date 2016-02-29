@@ -30,13 +30,22 @@ game.PlayScreen = me.ScreenObject.extend({
     this.players = players;
     this.playerId = idPlayer;
 
+    console.log(this.players[this.playerId]);
+
     //Add the players
     for(var id in players){
       me.game.world.addChild(players[id]);
     }
 
     //Emit first player data
-    socket.emit('updatePlayer', {id: t.playerId, player: {x:t.players[t.playerId].pos._x, y:t.players[t.playerId].pos._y}});
+    var data =
+    {
+      x:t.players[t.playerId].pos._x,
+      y:t.players[t.playerId].pos._y,
+      velX:t.players[t.playerId].body.vel.x,
+      velY:t.players[t.playerId].body.vel.y
+    };
+    socket.emit('updatePlayer', {id: t.playerId, player: data});
 
     //On each update event, update all the other players
     socket.on('update', function(param){
@@ -44,13 +53,25 @@ game.PlayScreen = me.ScreenObject.extend({
         var p = param[i];
 
         if(p.id !== t.playerId){
+          console.log(p);
           t.players[p.id].pos.set(p.pos.x, p.pos.y);
+          t.players[p.id].body.vel.set(p.vel.x, p.vel.y);
+          //t.players[p.id].renderable.setCurrentAnimation(p.currentAnimation);
           //TODO update other params
         }
       }
       //To force the drawing of each object by the engine
       me.game.repaint();
-      socket.emit('updatePlayer', {id: t.playerId, player: {x:t.players[t.playerId].pos._x, y:t.players[t.playerId].pos._y}});
+
+      var data =
+      {
+        x:t.players[t.playerId].pos._x,
+        y:t.players[t.playerId].pos._y,
+        velX:t.players[t.playerId].body.vel.x,
+        velY:t.players[t.playerId].body.vel.y,
+        currentAnimation:t.players[t.playerId].renderable.current.name
+      };
+      socket.emit('updatePlayer', {id: t.playerId, player: data});
     });
 
     // add our HUD to the game world
