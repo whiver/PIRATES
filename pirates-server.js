@@ -96,7 +96,6 @@ io.on('connection', function (socket) {
 
   socket.on('updatePlayer', function(p){
     var player = game.Get(p.id);
-
     player.pos.x = p.player.x;
     player.pos.y = p.player.y;
     player.vel.x = p.player.velX;
@@ -105,6 +104,16 @@ io.on('connection', function (socket) {
     //TODO update other params
 
     toUpdate.push(socket);
+  });
+
+  socket.on('disconnect', function() {
+    // Clean the game and wait for new players
+    console.log('Disconnection. Resetting the game.')
+    socket.disconnect('Not enough players');
+    game = new Pirates.Game();
+    nbPlayers = 0;
+    nbReady = 0;
+    toUpdate = [];
   });
 });
 
