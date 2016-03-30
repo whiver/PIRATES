@@ -49,12 +49,16 @@ game.PlayScreen = me.ScreenObject.extend({
 
     //On each update event, update all the other players
     socket.on('update', function(param){
-      for(var i in param){
+      for(var i in param) {
         var p = param[i];
 
         if(p.id !== t.playerId){
-          console.log(p);
-          t.players[p.id].pos.set(p.pos.x, p.pos.y);
+          if (me.game.HASH.debug === true) {
+            console.log(p);
+          }
+
+          t.players[p.id].pos.x = p.pos.x;
+          t.players[p.id].pos.y = p.pos.y;
           t.players[p.id].body.vel.set(p.vel.x, p.vel.y);
           //t.players[p.id].renderable.setCurrentAnimation(p.currentAnimation);
           //TODO update other params
