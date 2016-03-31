@@ -18,25 +18,14 @@ along with PIRATES.  If not, see <http://www.gnu.org/licenses/>.
 /**
 * Other Player Entity
 */
-game.OtherPlayer = me.Entity.extend({
+game.OtherPlayer = game.Character.extend({
 
   /**
   * constructor
   */
   init:function (x, y, settings) {
     // call the constructor
-    this._super(me.Entity, 'init', [x, y , settings]);
-
-    // set the default horizontal & vertical speed (accel vector)
-    this.body.setVelocity(2, 2);
-
-    this.body.gravity = 0;
-
-    // set the display to follow our position on both axis
-    me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
-
-    // ensure the player is updated even when outside of the viewport
-    this.alwaysUpdate = true;
+    this._super(game.Character, 'init', [x, y , settings]);
 
     // define a basic walking animation (using all frames)
     this.renderable.addAnimation("downWalk",  [3, 4, 5]);
@@ -90,17 +79,5 @@ game.OtherPlayer = me.Entity.extend({
 
     // return true if we moved or if the renderable was updated
     return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
-  },
-
-  /**
-  * colision handler
-  * (called when colliding with other objects)
-  */
-  onCollision : function (response, other) {
-    if(other instanceof game.Player || other instanceof game.OtherPlayer){
-      return false;
-    }
-    // Make all other objects solid
-    return true;
   }
 });
