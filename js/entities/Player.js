@@ -27,15 +27,21 @@ game.Player = game.Character.extend({
     // call the constructor
     this._super(game.Character, 'init', [x, y , settings]);
 
+    // set the display to follow our position on both axis
+    me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
+
     // define a basic walking animation (using all frames)
-    this.renderable.addAnimation("downWalk",  [0, 1, 2]);
-    this.renderable.addAnimation("upWalk",  [36, 37, 38]);
-    this.renderable.addAnimation("sideWalk",  [24, 25, 26]);
+    this.characterRenderable.addAnimation("downWalk",  [0, 1, 2]);
+    this.characterRenderable.addAnimation("upWalk",  [36, 37, 38]);
+    this.characterRenderable.addAnimation("sideWalk",  [24, 25, 26]);
 
     // define a standing animation (using the first frame)
-    this.renderable.addAnimation("stand",  [1]);
+    this.characterRenderable.addAnimation("stand", [1]);
     // set the standing animation as default
-    this.renderable.setCurrentAnimation("stand");
+    this.characterRenderable.setCurrentAnimation("stand");
+
+    // Add the weapon
+    this.setWeapon();
   },
 
   /**
@@ -45,23 +51,25 @@ game.Player = game.Character.extend({
     //Go left
     if (me.input.isKeyPressed('left')) {
       // flip the sprite on horizontal axis
-      this.renderable.flipX(true);
+      this.characterRenderable.flipX(true);
       // update the entity velocity
       this.body.vel.x -= this.body.accel.x * me.timer.tick;
       // change to the walking animation
-      if (!this.renderable.isCurrentAnimation("sideWalk")) {
-        this.renderable.setCurrentAnimation("sideWalk");
+      if (!this.characterRenderable.isCurrentAnimation("sideWalk")) {
+        this.characterRenderable.setCurrentAnimation("sideWalk");
       }
     //Go right
     } else if (me.input.isKeyPressed('right')) {
       // unflip the sprite
-      this.renderable.flipX(false);
+      this.characterRenderable.flipX(false);
       // update the entity velocity
       this.body.vel.x += this.body.accel.x * me.timer.tick;
       // change to the walking animation
-      if (!this.renderable.isCurrentAnimation("sideWalk")) {
-        this.renderable.setCurrentAnimation("sideWalk");
+      if (!this.characterRenderable.isCurrentAnimation("sideWalk")) {
+        this.characterRenderable.setCurrentAnimation("sideWalk");
       }
+    } else if (me.input.isKeyPressed('attack')) {
+      this.attack();
     }
     //Doesn't move on x axis
     else {
@@ -72,15 +80,15 @@ game.Player = game.Character.extend({
     if (me.input.isKeyPressed('up')){
       this.body.vel.y -= this.body.accel.y * me.timer.tick;
       // change to the walking animation
-      if (!this.renderable.isCurrentAnimation("upWalk") && !me.input.isKeyPressed('right') && !me.input.isKeyPressed('left')) {
-        this.renderable.setCurrentAnimation("upWalk");
+      if (!this.characterRenderable.isCurrentAnimation("upWalk") && !me.input.isKeyPressed('right') && !me.input.isKeyPressed('left')) {
+        this.characterRenderable.setCurrentAnimation("upWalk");
       }
     //Go down
     } else if (me.input.isKeyPressed('down')){
       this.body.vel.y += this.body.accel.y * me.timer.tick;
       // change to the walking animation
-      if (!this.renderable.isCurrentAnimation("downWalk") && !me.input.isKeyPressed('right') && !me.input.isKeyPressed('left')) {
-        this.renderable.setCurrentAnimation("downWalk");
+      if (!this.characterRenderable.isCurrentAnimation("downWalk") && !me.input.isKeyPressed('right') && !me.input.isKeyPressed('left')) {
+        this.characterRenderable.setCurrentAnimation("downWalk");
       }
     //Doesn't move on y axis
     } else {
@@ -89,7 +97,7 @@ game.Player = game.Character.extend({
 
     //Stand animation
     if(!me.input.isKeyPressed('up') && !me.input.isKeyPressed('down') && !me.input.isKeyPressed('left') && !me.input.isKeyPressed('right')){
-      this.renderable.setCurrentAnimation("stand");
+      this.characterRenderable.setCurrentAnimation("stand");
     }
 
     // apply physics to the body (this moves the entity)

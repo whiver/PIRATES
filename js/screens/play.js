@@ -30,8 +30,6 @@ game.PlayScreen = me.ScreenObject.extend({
     this.players = players;
     this.playerId = idPlayer;
 
-    console.log(this.players[this.playerId]);
-
     //Add the players
     for(var id in players){
       me.game.world.addChild(players[id]);
@@ -53,14 +51,10 @@ game.PlayScreen = me.ScreenObject.extend({
         var p = param[i];
 
         if(p.id !== t.playerId){
-          if (me.game.HASH.debug === true) {
-            console.log(p);
-          }
-
           t.players[p.id].pos.x = p.pos.x;
           t.players[p.id].pos.y = p.pos.y;
           t.players[p.id].body.vel.set(p.vel.x, p.vel.y);
-          //t.players[p.id].renderable.setCurrentAnimation(p.currentAnimation);
+          //t.players[p.id].characterRenderable.setCurrentAnimation(p.currentAnimation);
           //TODO update other params
         }
       }
@@ -73,7 +67,7 @@ game.PlayScreen = me.ScreenObject.extend({
         y:t.players[t.playerId].pos._y,
         velX:t.players[t.playerId].body.vel.x,
         velY:t.players[t.playerId].body.vel.y,
-        currentAnimation:t.players[t.playerId].renderable.current.name
+        currentAnimation:t.players[t.playerId].characterRenderable.current.name
       };
       socket.emit('updatePlayer', {id: t.playerId, player: data});
     });
