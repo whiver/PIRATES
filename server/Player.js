@@ -41,6 +41,7 @@
       this.points = 0;
       this.pos = {x: px, y: py};
       this.vel = {x: 0, y: 0};
+      this.lastMaj = Date.now();
     }
 
     //------------------------ Getters / Setters -------------------------------

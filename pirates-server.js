@@ -90,7 +90,7 @@ io.on('connection', function (socket) {
         }
 
         toUpdate = [];
-      }, 50);
+      }, 100);
     }
   });
 
@@ -101,6 +101,7 @@ io.on('connection', function (socket) {
     player.vel.x = p.player.velX;
     player.vel.y = p.player.velY;
     player.currentAnimation = p.player.currentAnimation;
+    player.lastMaj = p.player.lastMaj;
     //TODO update other params
 
     toUpdate.push(socket);
