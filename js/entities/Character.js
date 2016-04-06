@@ -61,6 +61,9 @@ game.Character = me.Entity.extend({
 
         this.weapon.alpha = 0;
 
+        // Set the anchor point of the weapon in the middle to ease flipping
+        this.weapon.anchorPoint.set(0.5, 0.5);
+
         // Add the collision shape and store its index to find it later
         this.weapon.bodyIndex = this.body.addShape(new me.Rect(18, 4, 12, 24)) - 1;
     },
@@ -75,6 +78,7 @@ game.Character = me.Entity.extend({
 
             // Debug assertions
             if (me.game.HASH.debug === true) {
+                console.info("Attacking...");
                 console.assert(this.weapon !== undefined, "The weapon should be defined.", this);
                 console.assert(this.weapon.defaultWeaponPos !== undefined,
                     "The default position of the weapon should be defined.",
@@ -83,10 +87,8 @@ game.Character = me.Entity.extend({
 
             // Update the weapon's position to fit the player
             if (this.body.vel.x < 0) {
-                this.weapon.pos.x = this.weapon.defaultWeaponPos.x - this.width;
                 this.weapon.flipX(true);
             } else if (this.body.vel.x > 0) {
-                this.weapon.pos.x = this.weapon.defaultWeaponPos.x;
                 this.weapon.flipX(false);
             }
 

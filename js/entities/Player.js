@@ -68,8 +68,6 @@ game.Player = game.Character.extend({
       if (!this.characterRenderable.isCurrentAnimation("sideWalk")) {
         this.characterRenderable.setCurrentAnimation("sideWalk");
       }
-    } else if (me.input.isKeyPressed('attack')) {
-      this.attack();
     }
     //Doesn't move on x axis
     else {
@@ -98,6 +96,10 @@ game.Player = game.Character.extend({
     //Stand animation
     if(!me.input.isKeyPressed('up') && !me.input.isKeyPressed('down') && !me.input.isKeyPressed('left') && !me.input.isKeyPressed('right')){
       this.characterRenderable.setCurrentAnimation("stand");
+    }
+
+    if (me.input.isKeyPressed('attack')) {
+      this.attack();
     }
 
     // apply physics to the body (this moves the entity)
