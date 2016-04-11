@@ -90,7 +90,14 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         report: 'min',
-        preserveComments: 'some'
+        preserveComments: false,
+        screwIE8: true,
+        banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+              '<%= grunt.template.today("yyyy-mm-dd") %> - <%= pkg.url %> */',
+        global_defs: {
+          "me.game.HASH.debug": false
+        },
+        dead_code: true
       },
       dist: {
         files: {

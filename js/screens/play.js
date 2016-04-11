@@ -21,7 +21,7 @@ game.PlayScreen = me.ScreenObject.extend({
   */
   onResetEvent: function(players, idPlayer) {
     //Map init
-    me.levelDirector.loadLevel("area01");
+    me.levelDirector.loadLevel("map_base");
 
     // reset the score
     game.data.score = 0;
@@ -34,6 +34,7 @@ game.PlayScreen = me.ScreenObject.extend({
     for(var id in players){
       me.game.world.addChild(players[id]);
     }
+    
 
     //Emit first player data
     var data =
@@ -65,7 +66,7 @@ game.PlayScreen = me.ScreenObject.extend({
           t.players[p.id].body.vel.set(p.vel.x, p.vel.y);
           t.players[p.id].pos.x = dx;
           t.players[p.id].pos.y = dy;
-          //t.players[p.id].renderable.setCurrentAnimation(p.currentAnimation);
+          //t.players[p.id].characterRenderable.setCurrentAnimation(p.currentAnimation);
           //TODO update other params
         }
       }
@@ -79,7 +80,7 @@ game.PlayScreen = me.ScreenObject.extend({
         velX:t.players[t.playerId].body.vel.x,
         velY:t.players[t.playerId].body.vel.y,
         lastMaj: Date.now(),
-        currentAnimation:t.players[t.playerId].renderable.current.name
+        currentAnimation:t.players[t.playerId].characterRenderable.current.name
       };
       socket.emit('updatePlayer', {id: t.playerId, player: data});
     });
@@ -87,6 +88,9 @@ game.PlayScreen = me.ScreenObject.extend({
     // add our HUD to the game world
     this.HUD = new game.HUD.Container();
     me.game.world.addChild(this.HUD);
+    
+    // set the display to follow our position on both axis
+    me.game.viewport.follow(this.players[this.playerId], me.game.viewport.AXIS.BOTH);
   },
 
   /**

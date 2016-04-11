@@ -109,7 +109,8 @@ io.on('connection', function (socket) {
 
   socket.on('disconnect', function() {
     // Clean the game and wait for new players
-    console.log('Disconnection. Resetting the game.')
+    console.log('Disconnection. Resetting the game.');
+    // TODO Send a message to alert disconnected clients
     socket.disconnect('Not enough players');
     game = new Pirates.Game();
     nbPlayers = 0;
