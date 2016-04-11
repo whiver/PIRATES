@@ -54,17 +54,15 @@ game.PlayScreen = me.ScreenObject.extend({
 
         if(p.id !== t.playerId){
           var dt = now - p.lastMaj;
-          var dx = p.pos.x;
-          var dy = p.pos.y;
-
-          if(!isNaN(dt)){
-            dx += t.players[p.id].body.vel.x * (dt / 1000);
-            dy += t.players[p.id].body.vel.y * (dt / 1000);
-          }
 
           t.players[p.id].body.vel.set(p.vel.x, p.vel.y);
-          t.players[p.id].pos.x = dx;
-          t.players[p.id].pos.y = dy;
+          t.players[p.id].pos.x = p.pos.x;
+          t.players[p.id].pos.y = p.pos.y;
+
+          if(!isNaN(dt)){
+            t.players[p.id].update(dt);
+          }
+
           //t.players[p.id].renderable.setCurrentAnimation(p.currentAnimation);
           //TODO update other params
         }
