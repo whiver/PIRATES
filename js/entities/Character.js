@@ -62,11 +62,8 @@ game.Character = me.Entity.extend({
 
         this.weapon.alpha = 0;
 
-        // Set the anchor point of the weapon in the middle to ease flipping
-        this.weapon.anchorPoint.set(0.5, 0.5);
-
         // Add the collision shape and store its index to find it later
-        this.weapon.bodyIndex = this.body.addShape(new me.Rect(18, 4, 12, 24)) - 1;
+        this.weapon.bodyIndex = this.body.addShape(this.weapon.defaultHitboxPos.right) - 1;
     },
 
     /**
@@ -75,6 +72,7 @@ game.Character = me.Entity.extend({
     attack: function () {
         "use strict";
         if (!this.attacking) {
+            var attackAnimation;
             this.attacking = true;
 
             // Debug assertions
@@ -87,16 +85,50 @@ game.Character = me.Entity.extend({
             }
 
             // Update the weapon's position to fit the player
+            // FIXME Position is hard-coded
             if (this.body.vel.x < 0) {
+                // Facing left
                 this.weapon.flipX(true);
+                this.weapon.pos.x = this.weapon.defaultWeaponPos.x - 17;
+                this.weapon.pos.y = this.weapon.defaultWeaponPos.y;
+                this.body.shapes[this.weapon.bodyIndex] = this.weapon.defaultHitboxPos.left;
+                this.body.updateBounds();
+                attackAnimation = "attack_hor";
             } else if (this.body.vel.x > 0) {
+                // Facing right
                 this.weapon.flipX(false);
+                this.weapon.pos.x = this.weapon.defaultWeaponPos.x;
+                this.weapon.pos.y = this.weapon.defaultWeaponPos.y;
+                this.body.shapes[this.weapon.bodyIndex] = this.weapon.defaultHitboxPos.right;
+                this.body.updateBounds();
+                attackAnimation = "attack_hor";
+            } else if (this.body.vel.y > 0) {
+                // Facing bottom
+                this.weapon.flipX(false);
+                this.weapon.flipY(true);
+                this.weapon.pos.x = this.weapon.defaultWeaponPos.x - 5;
+                this.weapon.pos.y = this.weapon.defaultWeaponPos.y + 10;
+                this.body.shapes[this.weapon.bodyIndex] = this.weapon.defaultHitboxPos.bottom;
+                this.body.updateBounds();
+                attackAnimation = "attack_ver";
+            } else if (this.body.vel.y < 0) {
+                // Facing top
+                this.weapon.flipX(false);
+                this.weapon.flipY(false);
+                this.weapon.pos.x = this.weapon.defaultWeaponPos.x - 5;
+                this.weapon.pos.y = this.weapon.defaultWeaponPos.y - 5;
+                this.body.shapes[this.weapon.bodyIndex] = this.weapon.defaultHitboxPos.top;
+                this.body.updateBounds();
+                attackAnimation = "attack_ver";
+            } else {
+                // Player is not moving: we keep the same attack parameters
+                attackAnimation = this.weapon.current.name;
             }
-
+            
             this.weapon.alpha = 1;
 
             // Run the attack animation
-            this.weapon.setCurrentAnimation("attack", function () {
+            this.weapon.setCurrentAnimation(attackAnimation, function () {
                 // After the animation, hide the sprite and disable the hitbox
                 this.weapon.alpha = 0;
                 // Disable the hitbox
