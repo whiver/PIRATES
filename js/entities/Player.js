@@ -26,10 +26,7 @@ game.Player = game.Character.extend({
   init:function (x, y, settings) {
     // call the constructor
     this._super(game.Character, 'init', [x, y , settings]);
-
-    // set the display to follow our position on both axis
-    me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
-
+    
     // define a basic walking animation (using all frames)
     this.characterRenderable.addAnimation("downWalk",  [0, 1, 2]);
     this.characterRenderable.addAnimation("upWalk",  [36, 37, 38]);
@@ -109,6 +106,6 @@ game.Player = game.Character.extend({
     me.collision.check(this);
 
     // return true if we moved or if the renderable was updated
-    return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
+    return (this._super(game.Character, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
   }
 });

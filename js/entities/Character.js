@@ -41,6 +41,7 @@ game.Character = me.Entity.extend({
         this.characterRenderable = this.renderable;
         this.renderable = new me.Container(0,  0, settings.width, settings.height);
         this.renderable.addChild(this.characterRenderable);
+        this.renderable.autoSort = false;
 
         this.weapon = {};
     },
@@ -128,5 +129,59 @@ game.Character = me.Entity.extend({
 
         // Make all other objects solid
         return true;
+    },
+    
+    /**
+     * FIXME: Due to a MelonJS bug, we must overwrite the Entity's update
+     * method, since it directly calls those from Container, which causes
+     * the renderable to remain invisible
+     * @ignore
+     */
+    update: function (dt) {
+        this.renderable._super(me.Renderable, "update", [dt]);
+        var isDirty = false;
+        var isFloating = false;
+        var isPaused = me.state.isPaused();
+        var viewport = me.game.viewport;
+        var globalFloatingCounter = 0;
+
+        // Update container's absolute position
+        this.renderable._absPos.setV(this.renderable.pos);
+        if (this.renderable.ancestor) {
+            this.renderable._absPos.add(this.renderable.ancestor._absPos);
+        }
+
+        for (var i = this.renderable.children.length, obj; i--, (obj = this.renderable.children[i]);) {
+            if (isPaused && (!obj.updateWhenPaused)) {
+                // skip this object
+                continue;
+            }
+
+            if (obj.isRenderable) {
+                isFloating = (globalFloatingCounter > 0 || obj.floating);
+                if (isFloating) {
+                    globalFloatingCounter++;
+                }
+                // check if object is visible
+                //~ obj.inViewport = isFloating || viewport.isVisible(this.getBounds());
+                obj.inViewport = true;
+
+                // update our object
+                isDirty = ((obj.inViewport || obj.alwaysUpdate) && obj.update(dt)) || isDirty;
+
+                // Update child's absolute position
+                obj._absPos.setV(this._absPos).add(obj.pos);
+
+                if (globalFloatingCounter > 0) {
+                    globalFloatingCounter--;
+                }
+            }
+            else {
+                // just directly call update() for non renderable object
+                isDirty = obj.update(dt) || isDirty;
+            }
+        }
+
+        return isDirty;
     }
 });

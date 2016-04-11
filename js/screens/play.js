@@ -21,7 +21,7 @@ game.PlayScreen = me.ScreenObject.extend({
   */
   onResetEvent: function(players, idPlayer) {
     //Map init
-    me.levelDirector.loadLevel("area01");
+    me.levelDirector.loadLevel("map_base");
 
     // reset the score
     game.data.score = 0;
@@ -34,6 +34,7 @@ game.PlayScreen = me.ScreenObject.extend({
     for(var id in players){
       me.game.world.addChild(players[id]);
     }
+    
 
     //Emit first player data
     var data =
@@ -75,6 +76,9 @@ game.PlayScreen = me.ScreenObject.extend({
     // add our HUD to the game world
     this.HUD = new game.HUD.Container();
     me.game.world.addChild(this.HUD);
+    
+    // set the display to follow our position on both axis
+    me.game.viewport.follow(this.players[this.playerId], me.game.viewport.AXIS.BOTH);
   },
 
   /**

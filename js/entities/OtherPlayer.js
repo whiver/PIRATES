@@ -78,6 +78,6 @@ game.OtherPlayer = game.Character.extend({
     me.collision.check(this);
 
     // return true if we moved or if the renderable was updated
-    return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
+    return (this._super(game.Character, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
   }
 });
