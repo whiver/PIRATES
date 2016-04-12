@@ -53,13 +53,20 @@ var toUpdate = [];
 
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
+	
+  // At the connection, you receive the list of players ready to play 
+  socket.emit('memberConnected', game.GetList());
+	
   // Allow a player to join the game and set his pseudo
   socket.on('join', function (pseudo) {
     var idPlayer = game.AddPlayer(pseudo);
 
     if(idPlayer !== -1){
       console.log('Player ' + pseudo + ' joined the game.');
-
+	
+	  // Send pseudo to the other player
+	  io.emit('memberConnected', pseudo);
+	  
       //Give an ID to the player
       socket.emit('initId', idPlayer);
       nbPlayers++;

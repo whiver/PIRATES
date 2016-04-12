@@ -17,20 +17,26 @@
     <body>
       <div class="overPanel">
         <div class="dialog">
-          Pseudo :&nbsp<input id="pseudo" type="text" name="pseudo"/>&nbsp
+          Pseudo :&nbsp <input id="pseudo" type="text" name="pseudo"/> &nbsp
           <input id="button" type="submit" value="Go!">
           <div id="error"></div>
         </div>
       </div>
+	  <div class="MemberPanel">
+        <div class="playersList">
+           <h3><u> Players Ready </u></h3> <br>
+		   <ol id="liste"></ol>
+        </div>
+      </div>
+	  
         <!-- Canvas placeholder -->
         <div id="screen"></div>
 
         <!-- Socket io -->
-        <script src="/socket.io/socket.io.js"></script>
+	     <script src="/socket.io/socket.io.js"></script>
         <script>
-          var socket = io();
+        var socket = io();
         </script>
-
         <!-- melonJS Library -->
         <!-- build:js js/app.min.js -->
         <script type="text/javascript" src="lib/melonJS-3.0.1.js"></script>
@@ -71,7 +77,24 @@
         <script>
           var button = document.getElementById("button");
           var pseudo = document.getElementById("pseudo");
-
+		  
+		  socket.on('memberConnected', function(pseudo){
+				if (typeof(pseudo) == "string" )
+				{
+					var li = document.createElement('li');
+					li.innerHTML = pseudo;
+					document.getElementById('liste').appendChild(li);
+				}
+				else{
+			        for(var i in pseudo) {
+					  var p = pseudo[i];
+					  var li = document.createElement('li');
+					  li.innerHTML = p.pseudo;
+					  document.getElementById('liste').appendChild(li);
+					}
+				}
+          });
+		  
           button.addEventListener("click", function(){
             socket.emit("join", pseudo.value);
           });
@@ -83,6 +106,7 @@
               error.style.display = "block";
             }
           });
+		  
         </script>
     </body>
 </html>
