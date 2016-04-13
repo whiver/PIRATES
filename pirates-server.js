@@ -49,17 +49,27 @@ app.use("/build", serveStatic(__dirname + '/build/'));
 var game = new Pirates.Game();
 var nbPlayers = 0;
 var nbReady = 0;
+var nbPlayersNeeded = 2;
 var toUpdate = [];
 
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
+	
+  // At the connection, you receive the number of players needed to begin a game 
+  socket.emit('nbPlayersRequired', nbPlayersNeeded);
+  // And you receive the list of players ready to play 
+  socket.emit('memberConnected', game.GetList());
+
   // Allow a player to join the game and set his pseudo
   socket.on('join', function (pseudo) {
     var idPlayer = game.AddPlayer(pseudo);
 
     if(idPlayer !== -1){
       console.log('Player ' + pseudo + ' joined the game.');
-
+	
+	  // Send pseudo to the other player
+	  io.emit('memberConnected', pseudo);
+	  
       //Give an ID to the player
       socket.emit('initId', idPlayer);
       nbPlayers++;
@@ -71,7 +81,7 @@ io.on('connection', function (socket) {
 
   //Event received when the player have succesfully received is ID
   socket.on('initIdDone', function(){
-    if(nbPlayers >= 2){
+    if(nbPlayers >= nbPlayersNeeded){
       //Give the players list to everyone
       io.emit('init', game.GetList());
     }
@@ -80,7 +90,7 @@ io.on('connection', function (socket) {
   //Event received when a player is ready
   socket.on('ready', function(){
     nbReady++;
-    if(nbReady >= 2){
+    if(nbReady >= nbPlayersNeeded){
       //Start the game for everyone
       io.emit('start');
 
