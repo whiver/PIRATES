@@ -91,6 +91,10 @@ var game = {
       me.input.bindKey(me.input.KEY.UP,  "up");
       me.input.bindKey(me.input.KEY.DOWN, "down");
 
+      // Bind the attack on SPACE / LEFT CLICK
+      me.input.bindKey(me.input.KEY.SPACE, "attack", true);
+      me.input.bindPointer(me.input.KEY.SPACE);
+
       // Start the game (pass 2 args (players & playerId) to the onResetEvent function of the play screen)
       me.state.change(me.state.PLAY, players, playerId);
 

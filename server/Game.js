@@ -44,7 +44,7 @@
       Game.NbPlayers++;
 
       id = Game.NbPlayers;
-      this.players[id] = new Entities.Player(pseudo, id, 150, 150);
+      this.players[id] = new Entities.Player(pseudo, id, 400, 400);
 
       return id;
     }

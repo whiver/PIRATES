@@ -28,14 +28,14 @@ game.OtherPlayer = game.Character.extend({
     this._super(game.Character, 'init', [x, y , settings]);
 
     // define a basic walking animation (using all frames)
-    this.renderable.addAnimation("downWalk",  [3, 4, 5]);
-    this.renderable.addAnimation("upWalk",  [39, 40, 41]);
-    this.renderable.addAnimation("sideWalk",  [27, 28, 29]);
+    this.characterRenderable.addAnimation("downWalk",  [3, 4, 5]);
+    this.characterRenderable.addAnimation("upWalk",  [39, 40, 41]);
+    this.characterRenderable.addAnimation("sideWalk",  [27, 28, 29]);
 
     // define a standing animation (using the first frame)
-    this.renderable.addAnimation("stand",  [4]);
+    this.characterRenderable.addAnimation("stand",  [4]);
     // set the standing animation as default
-    this.renderable.setCurrentAnimation("stand");
+    this.characterRenderable.setCurrentAnimation("stand");
   },
 
   /**
@@ -43,31 +43,31 @@ game.OtherPlayer = game.Character.extend({
   */
   update : function (dt) {
     if(this.body.vel.y > 0){
-      if(!this.renderable.isCurrentAnimation("downWalk")){
-        this.renderable.setCurrentAnimation("downWalk");
+      if(!this.characterRenderable.isCurrentAnimation("downWalk")){
+        this.characterRenderable.setCurrentAnimation("downWalk");
       }
     }
     else if(this.body.vel.y < 0){
-      if(!this.renderable.isCurrentAnimation("upWalk")){
-        this.renderable.setCurrentAnimation("upWalk");
+      if(!this.characterRenderable.isCurrentAnimation("upWalk")){
+        this.characterRenderable.setCurrentAnimation("upWalk");
       }
     }
     else if(this.body.vel.x > 0){
-      this.renderable.flipX(false);
-      if(!this.renderable.isCurrentAnimation("sideWalk")){
-        this.renderable.setCurrentAnimation("sideWalk");
+      this.characterRenderable.flipX(false);
+      if(!this.characterRenderable.isCurrentAnimation("sideWalk")){
+        this.characterRenderable.setCurrentAnimation("sideWalk");
       }
     }
     else if(this.body.vel.x < 0){
-      this.renderable.flipX(true);
-      if(!this.renderable.isCurrentAnimation("sideWalk")){
-        this.renderable.setCurrentAnimation("sideWalk");
+      this.characterRenderable.flipX(true);
+      if(!this.characterRenderable.isCurrentAnimation("sideWalk")){
+        this.characterRenderable.setCurrentAnimation("sideWalk");
       }
     }
     else
     {
-      if(!this.renderable.isCurrentAnimation("stand")){
-        this.renderable.setCurrentAnimation("stand");
+      if(!this.characterRenderable.isCurrentAnimation("stand")){
+        this.characterRenderable.setCurrentAnimation("stand");
       }
     }
 
@@ -78,6 +78,6 @@ game.OtherPlayer = game.Character.extend({
     me.collision.check(this);
 
     // return true if we moved or if the renderable was updated
-    return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
+    return (this._super(game.Character, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
   }
 });
