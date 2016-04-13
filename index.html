@@ -24,8 +24,10 @@
       </div>
 	  <div class="MemberPanel">
         <div class="playersList">
-           <h3><u> Players Ready </u></h3> <br>
-		   <ol id="liste"></ol>
+			<CENTER><TABLE width=500px height=200px border=0>
+			<TR><TD width=40% align=center>  <div id="frameList"> <h3> Players Ready </h3> </div> </TD><TD width=60% rowspan=2 align=left> <ol id="liste"></ol></TD></TR>
+			<TR><TD width=40% align=center> (Missing :  &nbsp <label id="counter"> </label> ) </TD></TR>
+			</TABLE></CENTER> 
         </div>
       </div>
 	  
@@ -77,6 +79,11 @@
         <script>
           var button = document.getElementById("button");
           var pseudo = document.getElementById("pseudo");
+		  var counter = document.getElementById("counter");
+		  
+		  socket.on('nbPlayersRequired', function(nbPlayersRequired){
+			counter.innerHTML = nbPlayersRequired;
+          });
 		  
 		  socket.on('memberConnected', function(pseudo){
 				if (typeof(pseudo) == "string" )
@@ -84,6 +91,7 @@
 					var li = document.createElement('li');
 					li.innerHTML = pseudo;
 					document.getElementById('liste').appendChild(li);
+					counter.innerHTML -= 1;
 				}
 				else{
 			        for(var i in pseudo) {
@@ -91,6 +99,7 @@
 					  var li = document.createElement('li');
 					  li.innerHTML = p.pseudo;
 					  document.getElementById('liste').appendChild(li);
+					  counter.innerHTML -= 1;
 					}
 				}
           });
