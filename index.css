@@ -56,7 +56,7 @@ body {
 
 .dialog > #error{
     display: none;
-    margin-top: 20px;
+    margin-top: 200px;
     color: red;
 }
 

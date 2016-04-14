@@ -39,7 +39,17 @@
      */
     AddPlayer(pseudo){
       var id = -1;
-      //TODO check if pseudo is already defined
+	  
+	  // Check if pseudo is already defined
+	  var listPlayers = this.players;
+	  for(var i in listPlayers) {
+		  var player = listPlayers[i];
+		  if(pseudo == player.pseudo)
+		  { 
+			return id; 
+		  }
+	  }
+
       //TODO make a system to locate the players in differents parts of the map
       Game.NbPlayers++;
 

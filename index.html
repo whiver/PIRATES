@@ -19,14 +19,14 @@
         <div class="dialog">
           Pseudo :&nbsp <input id="pseudo" type="text" name="pseudo"/> &nbsp
           <input id="button" type="submit" value="Go!">
-          <div id="error"></div>
         </div>
       </div>
+	  
 	  <div class="MemberPanel">
         <div class="playersList">
 			<CENTER><TABLE width=500px height=200px border=0>
 			<TR><TD width=40% align=center>  <div id="frameList"> <h3> Players Ready </h3> </div> </TD><TD width=60% rowspan=2 align=left> <ol id="liste"></ol></TD></TR>
-			<TR><TD width=40% align=center> (Missing :  &nbsp <label id="counter"> </label> ) </TD></TR>
+			<TR><TD width=40% align=center> (Missing :  &nbsp <label id="counter"> </label> ) <div id="error"></div> </TD></TR>
 			</TABLE></CENTER> 
         </div>
       </div>
@@ -86,6 +86,7 @@
           });
 		  
 		  socket.on('memberConnected', function(pseudo){
+				
 				if (typeof(pseudo) == "string" )
 				{
 					var li = document.createElement('li');
@@ -116,6 +117,14 @@
             }
           });
 		  
+		  // We need to know if the pseudo is already used before change label
+		  socket.on('initId', function(){
+		  document.getElementsByClassName("dialog")[0].innerHTML = "<h3> Awaiting players to begin the game </h3>";
+		  });
+		  
         </script>
+		
+
+
     </body>
 </html>

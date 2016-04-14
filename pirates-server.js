@@ -55,10 +55,10 @@ var toUpdate = [];
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
 	
-  // At the connection, you receive the number of players needed to begin a game 
-  socket.emit('nbPlayersRequired', nbPlayersNeeded);
-  // And you receive the list of players ready to play 
-  socket.emit('memberConnected', game.GetList());
+    // At the connection, you receive the number of players needed to begin a game 
+    socket.emit('nbPlayersRequired', nbPlayersNeeded);
+    // And you receive the list of players ready to play 
+    socket.emit('memberConnected', game.GetList());
 
   // Allow a player to join the game and set his pseudo
   socket.on('join', function (pseudo) {
@@ -67,7 +67,7 @@ io.on('connection', function (socket) {
     if(idPlayer !== -1){
       console.log('Player ' + pseudo + ' joined the game.');
 	
-	  // Send pseudo to the other player
+	  // Send pseudo to the others players
 	  io.emit('memberConnected', pseudo);
 	  
       //Give an ID to the player
@@ -118,13 +118,17 @@ io.on('connection', function (socket) {
   });
 
   socket.on('disconnect', function() {
+	  
     // Clean the game and wait for new players
     console.log('Disconnection. Resetting the game.');
+	
     // TODO Send a message to alert disconnected clients
     socket.disconnect('Not enough players');
+
     game = new Pirates.Game();
     nbPlayers = 0;
     nbReady = 0;
+	nbPlayersNeeded = 2;
     toUpdate = [];
   });
 });

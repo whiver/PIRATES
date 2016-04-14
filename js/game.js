@@ -99,7 +99,8 @@ var game = {
       me.state.change(me.state.PLAY, players, playerId);
 
       document.getElementsByClassName("overPanel")[0].style.display = "none";
-	  document.getElementsByClassName("MemberPanel")[0].style.display = "none";
+	  document.getElementsByClassName("MemberPanel")[0].style.display = "none";	
     });
+	
   }
 };
