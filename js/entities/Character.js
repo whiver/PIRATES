@@ -60,7 +60,7 @@ game.Character = me.Entity.extend({
         this.weapon = new game.Sword();
         this.renderable.addChild(this.weapon);
 
-        this.weapon.alpha = 0;
+        this.weapon.isRenderable = false;
 
         // Add the collision shape and store its index to find it later
         this.weapon.bodyIndex = this.body.addShape(this.weapon.defaultHitboxPos.right) - 1;
@@ -125,12 +125,12 @@ game.Character = me.Entity.extend({
                 attackAnimation = this.weapon.current.name;
             }
             
-            this.weapon.alpha = 1;
+            this.weapon.isRenderable = true;
 
             // Run the attack animation
             this.weapon.setCurrentAnimation(attackAnimation, function () {
                 // After the animation, hide the sprite and disable the hitbox
-                this.weapon.alpha = 0;
+                this.weapon.isRenderable = false;
                 // Disable the hitbox
                 this.attacking = false;
             }.bind(this));
