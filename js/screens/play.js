@@ -17,14 +17,28 @@ along with PIRATES.  If not, see <http://www.gnu.org/licenses/>.
 
 game.PlayScreen = me.ScreenObject.extend({
   /**
-  *  action to perform on state change
-  */
+   *  action to perform on state change
+   */
   onResetEvent: function(players, idPlayer) {
     //Map init
-    me.levelDirector.loadLevel("map_base");
-
-    // reset the score
-    game.data.score = 0;
+    me.levelDirector.loadLevel("map_base", {
+      flatten: false,
+      container: me.game.world
+    });
+    
+    /**
+     * The container of all characters in the game, creatd in Tiled
+     * @type {me.Container}
+     */
+    this.playerLayer = me.game.world.getChildByName("entities")[0];
+    
+    if (me.game.HASH.debug === true) {
+      console.assert(this.playerLayer !== undefined, 'No children named '
+        + '"entities" found. The Tiled map must include such a layer to add '
+        + 'the players to the game and the layer must not be empty.', this);
+      console.assert(this.playerLayer instanceof me.Container, 'The "entities" '
+        + 'Tiled layer must be an object layer to allow adding players inside it.', this);
+    }
 
     var t = this;
     this.players = players;
@@ -32,7 +46,7 @@ game.PlayScreen = me.ScreenObject.extend({
 
     //Add the players
     for(var id in players){
-      me.game.world.addChild(players[id]);
+      this.playerLayer.addChild(players[id]);
     }
 
 
