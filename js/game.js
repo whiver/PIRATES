@@ -17,7 +17,6 @@ along with PIRATES.  If not, see <http://www.gnu.org/licenses/>.
 
 /* Game namespace */
 var game = {
-
   // an object where to store game information
   data : {
     // score
@@ -55,9 +54,13 @@ var game = {
 
   // Run on game resources loaded.
   "loaded" : function () {
+    // Game states declarations
     me.state.set(me.state.MENU, new game.TitleScreen());
     me.state.set(me.state.PLAY, new game.PlayScreen());
 
+    // Pool entries definitions
+    me.pool.register("treasure", game.Treasure);
+    
     //First, we wait for all the players to connect
     var players = {};
     var playerId;
@@ -99,7 +102,7 @@ var game = {
       me.state.change(me.state.PLAY, players, playerId);
 
       document.getElementsByClassName("overPanel")[0].style.display = "none";
-	  document.getElementsByClassName("MemberPanel")[0].style.display = "none";	
+      document.getElementsByClassName("MemberPanel")[0].style.display = "none";	
     });
 	
   }
