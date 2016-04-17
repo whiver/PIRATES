@@ -55,26 +55,25 @@ var toUpdate = [];
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
 	
-    // At the connection, you receive the number of players needed to begin a game 
-    socket.emit('nbPlayersRequired', nbPlayersNeeded);
-    // And you receive the list of players ready to play 
-    socket.emit('memberConnected', game.GetList());
+  // At the connection, you receive the number of players needed to begin a game 
+  socket.emit('nbPlayersRequired', nbPlayersNeeded);
+  // And you receive the list of players ready to play 
+  socket.emit('memberConnected', game.GetList());
 
   // Allow a player to join the game and set his pseudo
   socket.on('join', function (pseudo) {
     var idPlayer = game.AddPlayer(pseudo);
 
-    if(idPlayer !== -1){
+    if(idPlayer !== -1) {
       console.log('Player ' + pseudo + ' joined the game.');
 	
-	  // Send pseudo to the others players
-	  io.emit('memberConnected', pseudo);
-	  
+      // Send pseudo to the others players
+      io.emit('memberConnected', pseudo);
+      
       //Give an ID to the player
       socket.emit('initId', idPlayer);
       nbPlayers++;
-    }
-    else{
+    } else {
       socket.emit('pseudoError', 'alreadyGiven');
     }
   });
@@ -123,12 +122,12 @@ io.on('connection', function (socket) {
     console.log('Disconnection. Resetting the game.');
 	
     // TODO Send a message to alert disconnected clients
-    socket.disconnect('Not enough players');
+    socket.leave();
 
     game = new Pirates.Game();
     nbPlayers = 0;
     nbReady = 0;
-	nbPlayersNeeded = 2;
+    nbPlayersNeeded = 2;
     toUpdate = [];
   });
 });
