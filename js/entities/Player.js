@@ -23,9 +23,9 @@ game.Player = game.Character.extend({
   /**
   * constructor
   */
-  init:function (x, y, settings) {
+  init:function (x, y, id, settings) {
     // call the constructor
-    this._super(game.Character, 'init', [x, y , settings]);
+    this._super(game.Character, 'init', [x, y, id, settings]);
     
     // define a basic walking animation (using all frames)
     this.characterRenderable.addAnimation("downWalk",  [0, 1, 2]);
@@ -39,6 +39,16 @@ game.Player = game.Character.extend({
 
     // Add the weapon
     this.setWeapon();
+  },
+  
+  /**
+   * Add a weapon to the player, including its graphics & collision mask
+   */
+  setWeapon: function () {
+    this._super(game.Character, 'setWeapon');
+    
+    // Add the collision shape and store its index to find it later
+    this.weapon.bodyIndex = this.body.addShape(this.weapon.defaultHitboxPos.right) - 1;
   },
 
   /**
@@ -107,5 +117,32 @@ game.Player = game.Character.extend({
 
     // return true if we moved or if the renderable was updated
     return (this._super(game.Character, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
+  },
+  
+  onCollision: function (response, other) {
+    if(other instanceof game.Character){
+      if (!!this.attacking && !this.hit && response.indexShapeB === this.weapon.bodyIndex) {
+        // We hit another player
+        if (me.game.HASH.debug === true) {
+          console.log("Hit:", "Player 1:", response.a, "Player 2:", response.b, "Details:", response );
+        }
+        
+        // Prevent further hits on this attack
+        this.hit = true;
+
+        // Send the attack action to the server for the next update
+        if (me.game.HASH.debug === true) {
+          if (me.state.current().updatePayload.attack !== undefined) {
+            console.warn("An attack has already been reported by this player since the last update.");
+          }
+        }
+        
+        me.state.current().updatePayload.attack = other.playerId;
+      }
+
+      return false;
+    }
+    
+    return true;
   }
 });

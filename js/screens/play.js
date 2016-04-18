@@ -51,48 +51,74 @@ game.PlayScreen = me.ScreenObject.extend({
 
 
     //Emit first player data
-    var data =
-    {
+    this.updatePayload = {
       x:t.players[t.playerId].pos._x,
       y:t.players[t.playerId].pos._y,
       velX:t.players[t.playerId].body.vel.x,
       velY:t.players[t.playerId].body.vel.y
     };
-    socket.emit('updatePlayer', {id: t.playerId, player: data});
+    socket.emit('updatePlayer', {id: t.playerId, player: this.updatePayload});
 
     //On each update event, update all the other players
     socket.on('update', function(param){
       var now = Date.now();
 
+      // Loop over each player to update
       for(var i in param) {
         var p = param[i];
 
-        if(p.id !== t.playerId){
+        if(p.id !== t.playerId) {
+          // Informations about other players
+          
           var dt = now - p.lastMaj;
 
+          // Update the players informations
           t.players[p.id].body.vel.set(p.vel.x, p.vel.y);
           t.players[p.id].pos.x = p.pos.x;
           t.players[p.id].pos.y = p.pos.y;
+          
+          // Run an attack if necessary
+          if (p.attack !== undefined) {
+            if (me.game.HASH.debug === true) {
+              console.info("Attack information received: " + p.id + " > " + p.attack);
+            }
+            
+            t.players[p.id].attack();
+            
+            // Hurt the player
+            t.players[p.attack].hurt();
+          }
 
           if(!isNaN(dt)){
             t.players[p.id].update(dt);
           }
-          //TODO update other params
+        } else {
+          // Informations about the main player
+          if (p.attack !== undefined) {
+            if (me.game.HASH.debug === true) {
+              console.info("Attack action accepted.");
+            }
+            
+            // Hurt the player
+            t.players[p.attack].hurt();
+          }
         }
       }
       //To force the drawing of each object by the engine
       me.game.repaint();
 
-      var data =
-      {
-        x:t.players[t.playerId].pos._x,
-        y:t.players[t.playerId].pos._y,
-        velX:t.players[t.playerId].body.vel.x,
-        velY:t.players[t.playerId].body.vel.y,
-        lastMaj: Date.now(),
-        currentAnimation:t.players[t.playerId].characterRenderable.current.name
-      };
-      socket.emit('updatePlayer', {id: t.playerId, player: data});
+      // Send the latest player's data to the server
+      t.updatePayload.x = t.players[t.playerId].pos._x,
+      t.updatePayload.y = t.players[t.playerId].pos._y,
+      t.updatePayload.velX = t.players[t.playerId].body.vel.x,
+      t.updatePayload.velY = t.players[t.playerId].body.vel.y,
+      t.updatePayload.lastMaj = Date.now(),
+      t.updatePayload.currentAnimation = t.players[t.playerId].characterRenderable.current.name
+      
+      socket.emit('updatePlayer', {id: t.playerId, player: t.updatePayload});
+      
+      // Reset the object's optional properties for the next update
+      t.updatePayload.attack = undefined;
     });
 
     // add our HUD to the game world

@@ -23,9 +23,9 @@ game.OtherPlayer = game.Character.extend({
   /**
   * constructor
   */
-  init:function (x, y, settings) {
+  init:function (x, y, id, settings) {
     // call the constructor
-    this._super(game.Character, 'init', [x, y , settings]);
+    this._super(game.Character, 'init', [x, y, id, settings]);
 
     // define a basic walking animation (using all frames)
     this.characterRenderable.addAnimation("downWalk",  [3, 4, 5]);
@@ -36,8 +36,11 @@ game.OtherPlayer = game.Character.extend({
     this.characterRenderable.addAnimation("stand",  [4]);
     // set the standing animation as default
     this.characterRenderable.setCurrentAnimation("stand");
+    
+    // Add the weapon
+    this.setWeapon();
   },
-
+  
   /**
   * update the entity
   */

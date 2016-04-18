@@ -54,7 +54,7 @@ var toUpdate = [];
 
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
-	
+  
   // At the connection, you receive the number of players needed to begin a game 
   socket.emit('nbPlayersRequired', nbPlayersNeeded);
   // And you receive the list of players ready to play 
@@ -66,7 +66,7 @@ io.on('connection', function (socket) {
 
     if(idPlayer !== -1) {
       console.log('Player ' + pseudo + ' joined the game.');
-	
+  
       // Send pseudo to the others players
       io.emit('memberConnected', pseudo);
       
@@ -111,16 +111,17 @@ io.on('connection', function (socket) {
     player.vel.y = p.player.velY;
     player.currentAnimation = p.player.currentAnimation;
     player.lastMaj = p.player.lastMaj;
+    player.attack = p.player.attack;
     //TODO update other params
 
     toUpdate.push(socket);
   });
 
   socket.on('disconnect', function() {
-	  
+    
     // Clean the game and wait for new players
     console.log('Disconnection. Resetting the game.');
-	
+  
     // TODO Send a message to alert disconnected clients
     socket.leave();
 
