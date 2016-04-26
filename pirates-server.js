@@ -54,10 +54,10 @@ var toUpdate = [];
 
 //-------------- Handle the client-server communication
 io.on('connection', function (socket) {
-  
-  // At the connection, you receive the number of players needed to begin a game 
+
+  // At the connection, you receive the number of players needed to begin a game
   socket.emit('nbPlayersRequired', nbPlayersNeeded);
-  // And you receive the list of players ready to play 
+  // And you receive the list of players ready to play
   socket.emit('memberConnected', game.GetList());
 
   // Allow a player to join the game and set his pseudo
@@ -66,10 +66,10 @@ io.on('connection', function (socket) {
 
     if(idPlayer !== -1) {
       console.log('Player ' + pseudo + ' joined the game.');
-  
+
       // Send pseudo to the others players
       io.emit('memberConnected', pseudo);
-      
+
       //Give an ID to the player
       socket.emit('initId', idPlayer);
       nbPlayers++;
@@ -96,10 +96,10 @@ io.on('connection', function (socket) {
       setInterval(function(){
         for(var i=0; i < toUpdate.length; i++){
           toUpdate[i].emit('update', game.GetList());
-        }
+      }
 
         toUpdate = [];
-      }, 100);
+      }, 50);
     }
   });
 
@@ -118,10 +118,10 @@ io.on('connection', function (socket) {
   });
 
   socket.on('disconnect', function() {
-    
+
     // Clean the game and wait for new players
     console.log('Disconnection. Resetting the game.');
-  
+
     // TODO Send a message to alert disconnected clients
     socket.leave();
 

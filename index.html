@@ -1,131 +1,138 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
-        <title>PIRATES – The game</title>
-        <link rel="stylesheet" type="text/css" media="screen" href="index.css">
-        <meta charset="UTF-8">
-        <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <link rel="apple-touch-icon" href="icons/touch-icon-iphone-60x60.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="icons/touch-icon-ipad-76x76.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="icons/touch-icon-iphone-retina-120x120.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="icons/touch-icon-ipad-retina-152x152.png">
-        <link rel="manifest" href="manifest.json">
-    </head>
-    <body>
-      <div class="overPanel">
-        <div class="dialog">
-          Pseudo :&nbsp <input id="pseudo" type="text" name="pseudo"/> &nbsp
-          <input id="button" type="submit" value="Go!">
-        </div>
+  <head>
+    <title>PIRATES – The game</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="index.css">
+    <meta charset="UTF-8">
+    <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="icons/touch-icon-iphone-60x60.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="icons/touch-icon-ipad-76x76.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="icons/touch-icon-iphone-retina-120x120.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/touch-icon-ipad-retina-152x152.png">
+    <link rel="manifest" href="manifest.json">
+  </head>
+  <body>
+    <div class="overPanel">
+      <div class="dialog">
+        Pseudo :&nbsp <input id="pseudo" type="text" name="pseudo"/> &nbsp
+        <input id="button" type="submit" value="Go!">
       </div>
-	  
-	  <div class="MemberPanel">
-        <div class="playersList">
-			<CENTER><TABLE width=500px height=200px border=0>
-			<TR><TD width=40% align=center>  <div id="frameList"> <h3> Players Ready </h3> </div> </TD><TD width=60% rowspan=2 align=left> <ol id="liste"></ol></TD></TR>
-			<TR><TD width=40% align=center> (Missing :  &nbsp <label id="counter"> </label> ) <div id="error"></div> </TD></TR>
-			</TABLE></CENTER> 
-        </div>
+    </div>
+
+    <div class="MemberPanel">
+      <div class="playersList">
+        <CENTER><TABLE width=500px height=200px border=0>
+          <TR><TD width=40% align=center>  <div id="frameList"> <h3> Players Ready </h3> </div> </TD><TD width=60% rowspan=2 align=left> <ol id="liste"></ol></TD></TR>
+          <TR><TD width=40% align=center> (Missing :  &nbsp <label id="counter"> </label> ) <div id="error"></div> </TD></TR>
+        </TABLE></CENTER>
       </div>
-	  
-        <!-- Canvas placeholder -->
-        <div id="screen"></div>
+    </div>
 
-        <!-- Socket io -->
-	     <script src="/socket.io/socket.io.js"></script>
-        <script>
-        var socket = io();
-        </script>
-        <!-- melonJS Library -->
-        <!-- build:js js/app.min.js -->
-        <script type="text/javascript" src="lib/melonJS-3.0.1.js"></script>
+    <!-- Canvas placeholder -->
+    <div id="screen"></div>
 
-        <!-- Plugin(s) -->
-        <script type="text/javascript" src="lib/plugins/debug/debugPanel.js"></script>
+    <!-- Socket io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    var socket = io();
+    </script>
+    <!-- melonJS Library -->
+    <!-- build:js js/app.min.js -->
+    <script type="text/javascript" src="lib/melonJS-3.0.1.js"></script>
 
-        <!-- Game Scripts -->
-        <script type="text/javascript" src="js/game.js"></script>
-        <script type="text/javascript" src="build/js/resources.js"></script>
+    <!-- Plugin(s) -->
+    <script type="text/javascript" src="lib/plugins/debug/debugPanel.js"></script>
 
-        <script type="text/javascript" src="js/entities/Treasure.js"></script>
-        <script type="text/javascript" src="js/entities/Weapons.js"></script>
-        <script type="text/javascript" src="js/entities/Character.js"></script>
-        <script type="text/javascript" src="js/entities/Player.js"></script>
-        <script type="text/javascript" src="js/entities/OtherPlayer.js"></script>
-        <script type="text/javascript" src="js/entities/HUD.js"></script>
+    <!-- Game Scripts -->
+    <script type="text/javascript" src="js/game.js"></script>
+    <script type="text/javascript" src="build/js/resources.js"></script>
 
-        <script type="text/javascript" src="js/screens/title.js"></script>
-        <script type="text/javascript" src="js/screens/play.js"></script>
-        <!-- /build -->
-        <!-- Bootstrap & Mobile optimization tricks -->
-        <script type="text/javascript">
-            window.onReady(function onReady() {
-                game.onload();
+    <script type="text/javascript" src="js/entities/Treasure.js"></script>
+    <script type="text/javascript" src="js/entities/Weapons.js"></script>
+    <script type="text/javascript" src="js/entities/Character.js"></script>
+    <script type="text/javascript" src="js/entities/Player.js"></script>
+    <script type="text/javascript" src="js/entities/OtherPlayer.js"></script>
+    <script type="text/javascript" src="js/entities/HUD.js"></script>
 
-                // Mobile browser hacks
-                if (me.device.isMobile && !navigator.isCocoonJS) {
-                    // Prevent the webview from moving on a swipe
-                    window.document.addEventListener("touchmove", function (e) {
-                        e.preventDefault();
-                        window.scroll(0, 0);
-                        return false;
-                    }, false);
-                }
-            });
-        </script>
+    <script type="text/javascript" src="js/screens/title.js"></script>
+    <script type="text/javascript" src="js/screens/play.js"></script>
+    <!-- /build -->
+    <!-- Bootstrap & Mobile optimization tricks -->
+    <script type="text/javascript">
+    window.onReady(function onReady() {
+      game.onload();
 
-        <script>
-          var button = document.getElementById("button");
-          var pseudo = document.getElementById("pseudo");
-		  var counter = document.getElementById("counter");
-		  
-		  socket.on('nbPlayersRequired', function(nbPlayersRequired){
-			counter.innerHTML = nbPlayersRequired;
-          });
-		  
-		  socket.on('memberConnected', function(pseudo){
-				
-				if (typeof(pseudo) == "string" )
-				{
-					var li = document.createElement('li');
-					li.innerHTML = pseudo;
-					document.getElementById('liste').appendChild(li);
-					counter.innerHTML -= 1;
-				}
-				else{
-			        for(var i in pseudo) {
-					  var p = pseudo[i];
-					  var li = document.createElement('li');
-					  li.innerHTML = p.pseudo;
-					  document.getElementById('liste').appendChild(li);
-					  counter.innerHTML -= 1;
-					}
-				}
-          });
-		  
-          button.addEventListener("click", function(){
-            socket.emit("join", pseudo.value);
-          });
+      // Mobile browser hacks
+      if (me.device.isMobile && !navigator.isCocoonJS) {
+        // Prevent the webview from moving on a swipe
+        window.document.addEventListener("touchmove", function (e) {
+          e.preventDefault();
+          window.scroll(0, 0);
+          return false;
+        }, false);
+      }
+    });
+    </script>
 
-          socket.on('pseudoError', function(msg){
-            if(msg === 'alreadyGiven'){
-              var error = document.getElementById("error")
-              error.innerText = "Error : Pseudo already taken !";
-              error.style.display = "block";
-            }
-          });
-		  
-		  // We need to know if the pseudo is already used before change label
-		  socket.on('initId', function(){
-		  document.getElementsByClassName("dialog")[0].innerHTML = "<h3> Awaiting players to begin the game </h3>";
-		  });
-		  
-        </script>
-		
+    <script>
+    var button = document.getElementById("button");
+    var pseudo = document.getElementById("pseudo");
+    var counter = document.getElementById("counter");
+
+    function emitJoin(){
+      socket.emit("join", pseudo.value);
+    };
+
+    button.addEventListener("click", emitJoin);
+    pseudo.addEventListener("keyup", function(e){
+      if(e.keyCode === 13){
+        emitJoin();
+      }
+    });
+
+    socket.on('nbPlayersRequired', function(nbPlayersRequired){
+      counter.innerHTML = nbPlayersRequired;
+    });
+
+    socket.on('memberConnected', function(pseudo){
+
+      if (typeof(pseudo) == "string" )
+      {
+        var li = document.createElement('li');
+        li.innerHTML = pseudo;
+        document.getElementById('liste').appendChild(li);
+        counter.innerHTML -= 1;
+      }
+      else{
+        for(var i in pseudo) {
+          var p = pseudo[i];
+          var li = document.createElement('li');
+          li.innerHTML = p.pseudo;
+          document.getElementById('liste').appendChild(li);
+          counter.innerHTML -= 1;
+        }
+      }
+    });
+
+    socket.on('pseudoError', function(msg){
+      if(msg === 'alreadyGiven'){
+        var error = document.getElementById("error")
+        error.innerText = "Error : Pseudo already taken !";
+        error.style.display = "block";
+      }
+    });
+
+    // We need to know if the pseudo is already used before change label
+    socket.on('initId', function(){
+      document.getElementsByClassName("dialog")[0].innerHTML = "<h3> Awaiting players to begin the game </h3>";
+    });
+
+    </script>
 
 
-    </body>
+
+  </body>
 </html>

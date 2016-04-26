@@ -25,13 +25,13 @@ game.PlayScreen = me.ScreenObject.extend({
       flatten: false,
       container: me.game.world
     });
-    
+
     /**
      * The container of all characters in the game, creatd in Tiled
      * @type {me.Container}
      */
     this.playerLayer = me.game.world.getChildByName("entities")[0];
-    
+
     if (me.game.HASH.debug === true) {
       console.assert(this.playerLayer !== undefined, 'No children named '
         + '"entities" found. The Tiled map must include such a layer to add '
@@ -69,27 +69,28 @@ game.PlayScreen = me.ScreenObject.extend({
 
         if(p.id !== t.playerId) {
           // Informations about other players
-          
+
           var dt = now - p.lastMaj;
 
           // Update the players informations
           t.players[p.id].body.vel.set(p.vel.x, p.vel.y);
           t.players[p.id].pos.x = p.pos.x;
           t.players[p.id].pos.y = p.pos.y;
-          
+
           // Run an attack if necessary
           if (p.attack !== undefined) {
             if (me.game.HASH.debug === true) {
               console.info("Attack information received: " + p.id + " > " + p.attack);
             }
-            
+
             t.players[p.id].attack();
-            
+
             // Hurt the player
             t.players[p.attack].hurt();
           }
 
           if(!isNaN(dt)){
+            console.log(dt);
             t.players[p.id].update(dt);
           }
         } else {
@@ -98,7 +99,7 @@ game.PlayScreen = me.ScreenObject.extend({
             if (me.game.HASH.debug === true) {
               console.info("Attack action accepted.");
             }
-            
+
             // Hurt the player
             t.players[p.attack].hurt();
           }
@@ -114,9 +115,9 @@ game.PlayScreen = me.ScreenObject.extend({
       t.updatePayload.velY = t.players[t.playerId].body.vel.y,
       t.updatePayload.lastMaj = Date.now(),
       t.updatePayload.currentAnimation = t.players[t.playerId].characterRenderable.current.name
-      
+
       socket.emit('updatePlayer', {id: t.playerId, player: t.updatePayload});
-      
+
       // Reset the object's optional properties for the next update
       t.updatePayload.attack = undefined;
     });
