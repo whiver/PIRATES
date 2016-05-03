@@ -30,12 +30,12 @@
       this.players = {};
       this.respawnPoints = [];
 
-      this.respawnPoints[0] = {x: '2048', y: '864'};
-      this.respawnPoints[1] = {x: '640', y: '704'};
-      this.respawnPoints[2] = {x: '608', y: '2048'};
-      this.respawnPoints[3] = {x: '1728', y: '1920'};
-      this.respawnPoints[4] = {x: '2112', y: '352'};
-      this.respawnPoints[5] = {x: '1280', y: '1280'};
+      this.respawnPoints[0] = {x: 2048, y: 864};
+      this.respawnPoints[1] = {x: 640, y: 704};
+      this.respawnPoints[2] = {x: 608, y: 2048};
+      this.respawnPoints[3] = {x: 1728, y: 1920};
+      this.respawnPoints[4] = {x: 2112, y: 352};
+      this.respawnPoints[5] = {x: 1280, y: 1280};
     }
 
     /**
