@@ -76,7 +76,7 @@ var game = {
         var p = param[i];
 
         if(p.id === playerId){
-          players[p.id] = new game.Player(p.pos.x, p.pos.y, p.id, {frameheight: 32, framewidth: 30, image: "pirates", width: 30, height:32});
+          players[p.id] = new game.Player(p.pos.x, p.pos.y, p.hp, p.id, {frameheight: 32, framewidth: 30, image: "pirates", width: 30, height:32});
         }
         else{
           players[p.id] = new game.OtherPlayer(p.pos.x, p.pos.y, p.id, {frameheight: 32, framewidth: 30, image: "pirates", width: 30, height:32});

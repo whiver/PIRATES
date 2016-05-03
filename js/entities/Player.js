@@ -20,12 +20,21 @@ along with PIRATES.  If not, see <http://www.gnu.org/licenses/>.
 */
 game.Player = game.Character.extend({
 
+
   /**
-  * constructor
-  */
-  init:function (x, y, id, settings) {
+   * Constructor
+   * @param {number} x   The initial X position of the player
+   * @param {number} y   The initial Y position of the player
+   * @param {number} hp  The number of HP the player begin with
+   * @param {number} id  The ID of the player
+   * @param {object} settings
+   */
+  init:function (x, y, hp, id, settings) {
     // call the constructor
     this._super(game.Character, 'init', [x, y, id, settings]);
+
+    // Properties
+    this.hp = hp;
     
     // define a basic walking animation (using all frames)
     this.characterRenderable.addAnimation("downWalk",  [0, 1, 2]);
@@ -49,6 +58,20 @@ game.Player = game.Character.extend({
     
     // Add the collision shape and store its index to find it later
     this.weapon.bodyIndex = this.body.addShape(this.weapon.defaultHitboxPos.right) - 1;
+  },
+
+  /** @inheritdoc */
+  hurt: function (hp) {
+    "use strict";
+    this._super(game.Character, 'hurt', [hp]);
+    this.hp = hp;
+  },
+
+  /** @inheritdoc */
+  die: function (respawnHP, respawnX, respawnY) {
+    "use strict";
+    this._super(game.Character, 'die', [respawnX, respawnY]);
+    this.hp = respawnHP;
   },
 
   /**

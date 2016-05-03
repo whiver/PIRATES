@@ -66,7 +66,6 @@ io.on('connection', function (socket) {
 
     if(idPlayer !== -1) {
       console.log('Player ' + pseudo + ' joined the game.');
-
       // Send pseudo to the others players
       io.emit('memberConnected', pseudo);
 
@@ -96,8 +95,13 @@ io.on('connection', function (socket) {
       setInterval(function(){
         for(var i=0; i < toUpdate.length; i++){
           toUpdate[i].emit('update', game.GetList());
-      }
-
+        }
+/*
+        // Ensure players are marked dead only once
+        for (var p = 0, l = game.GetList; i < l.length; ++i) {
+          l[p].dead = false;
+        }
+*/
         toUpdate = [];
       }, 50);
     }
@@ -112,8 +116,14 @@ io.on('connection', function (socket) {
     player.currentAnimation = p.player.currentAnimation;
     player.lastMaj = p.player.lastMaj;
     player.attack = p.player.attack;
+/*
+    // Handle attacks
+    if (player.attack) {
+      // TODO check attacks to avoid cheating
+      game.Get(player.attack).hurt();
+    }
     //TODO update other params
-
+*/
     toUpdate.push(socket);
   });
 

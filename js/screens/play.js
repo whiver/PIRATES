@@ -86,11 +86,15 @@ game.PlayScreen = me.ScreenObject.extend({
             t.players[p.id].attack();
 
             // Hurt the player
-            t.players[p.attack].hurt();
+            var target = t.players[p.attack];
+            if (target.dead) {
+              target.die(target.hp, target.pos.x, target.pos.y);
+            } else {
+              target.hurt(target.hp);
+            }
           }
 
           if(!isNaN(dt)){
-            console.log(dt);
             t.players[p.id].update(dt);
           }
         } else {

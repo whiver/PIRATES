@@ -145,7 +145,7 @@ game.Character = me.Entity.extend({
   
   /**
    * Hurts the player by dealing it some damages
-   * @param {number}  hp  The amount of damages
+   * @param {number}  hp  The remaining HP of the player
    */
   hurt: function (hp) {
     this.characterRenderable.flicker(300);
@@ -162,6 +162,24 @@ game.Character = me.Entity.extend({
 
     // Make all other objects solid
     return true;
+  },
+
+  /**
+   * Kill the player, displaying the corresponding animation, then respawn it at the given location
+   * @param {number} respawnHP  The number of life points the player respawns with
+   * @param {number} respawnX   The X position of the respawn
+   * @param {number} respawnY   The Y position of the respawn
+     */
+  die: function (respawnHP, respawnX, respawnY) {
+    "use strict";
+    if (me.game.HASH.debug === true) {
+      console.info("Player " + this.id + " died.");
+    }
+
+    // TODO Add this animation
+    //this.characterRenderable.setCurrentAnimation("die");
+    this.pos.x = respawnX;
+    this.pos.y = respawnY;
   },
   
   /**
