@@ -45,8 +45,8 @@ body {
     justify-content: center;
     flex-wrap: wrap;
     align-content: center;
-    width: 300px;
-    height: 100px;
+    width: 25%;
+    height: 15%;
     z-index: 500;
     color: #1c1c1c;
     background: #fff;
@@ -56,7 +56,7 @@ body {
 
 .dialog > #error{
     display: none;
-    margin-top: 200px;
+    margin-top: 55%;
     color: red;
 }
 
@@ -102,8 +102,8 @@ li:before {
     justify-content: center;
     flex-wrap: wrap;
     align-content: center;
-    width: 500px;
-    height: 200px;
+	width: 40%;
+    height: 60%;
     z-index: 500;
     color: #1c1c1c;
     background: #fff;
@@ -113,9 +113,11 @@ li:before {
 
 #frameList {
        border:4px solid black;
-       width:130px;
-       height:40px;
-	   padding: 0 6px 6px 6px;
 	   margin-right: 8px;
 }
+
+table {
+ width:100%;
+ height :100%;
+ }
 /* ******************** ******************** */

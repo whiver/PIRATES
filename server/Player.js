@@ -42,6 +42,8 @@
       this.pos = {x: px, y: py};
       this.vel = {x: 0, y: 0};
       this.lastMaj = Date.now();
+	  
+	  this.state = "None";
     }
 
     //------------------------ Getters / Setters -------------------------------
