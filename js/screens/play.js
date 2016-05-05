@@ -27,7 +27,7 @@ game.PlayScreen = me.ScreenObject.extend({
     });
 
     /**
-     * The container of all characters in the game, creatd in Tiled
+     * The container of all characters in the game, created in Tiled
      * @type {me.Container}
      */
     this.playerLayer = me.game.world.getChildByName("entities")[0];
@@ -66,8 +66,17 @@ game.PlayScreen = me.ScreenObject.extend({
       // Loop over each player to update
       for(var i in param) {
         var p = param[i];
-
-        if(p.id !== t.playerId) {
+        
+        if (p.dead) {
+          // Kill the player
+          t.players[p.id].die(p.pos.x, p.pos.y);
+        } else if (p.spawned === false) {
+          /* If the player is not dead and not spawned, it means that
+           * the server has not received the respawn confirmation yet,
+           * so we don't update the player
+           */
+          continue;
+        } else if(p.id !== t.playerId) {
           // Informations about other players
 
           var dt = now - p.lastMaj;
@@ -87,11 +96,7 @@ game.PlayScreen = me.ScreenObject.extend({
 
             // Hurt the player
             var target = t.players[p.attack];
-            if (target.dead) {
-              target.die(target.hp, target.pos.x, target.pos.y);
-            } else {
-              target.hurt(target.hp);
-            }
+            target.hurt();
           }
 
           if(!isNaN(dt)){
@@ -103,27 +108,32 @@ game.PlayScreen = me.ScreenObject.extend({
             if (me.game.HASH.debug === true) {
               console.info("Attack action accepted.");
             }
+            
+            t.players[p.id].hp = p.hp;
 
             // Hurt the player
-            t.players[p.attack].hurt();
+            var target = t.players[p.attack];
+            target.hurt(target.hp);
           }
         }
       }
+      
       //To force the drawing of each object by the engine
       me.game.repaint();
 
       // Send the latest player's data to the server
-      t.updatePayload.x = t.players[t.playerId].pos._x,
-      t.updatePayload.y = t.players[t.playerId].pos._y,
-      t.updatePayload.velX = t.players[t.playerId].body.vel.x,
-      t.updatePayload.velY = t.players[t.playerId].body.vel.y,
-      t.updatePayload.lastMaj = Date.now(),
-      t.updatePayload.currentAnimation = t.players[t.playerId].characterRenderable.current.name
+      t.updatePayload.x = t.players[t.playerId].pos._x;
+      t.updatePayload.y = t.players[t.playerId].pos._y;
+      t.updatePayload.velX = t.players[t.playerId].body.vel.x;
+      t.updatePayload.velY = t.players[t.playerId].body.vel.y;
+      t.updatePayload.lastMaj = Date.now();
+      t.updatePayload.currentAnimation = t.players[t.playerId].characterRenderable.current.name;
 
       socket.emit('updatePlayer', {id: t.playerId, player: t.updatePayload});
 
       // Reset the object's optional properties for the next update
       t.updatePayload.attack = undefined;
+      t.updatePayload.respawned = undefined;
     });
 
     // add our HUD to the game world

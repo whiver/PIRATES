@@ -166,14 +166,13 @@ game.Character = me.Entity.extend({
 
   /**
    * Kill the player, displaying the corresponding animation, then respawn it at the given location
-   * @param {number} respawnHP  The number of life points the player respawns with
    * @param {number} respawnX   The X position of the respawn
    * @param {number} respawnY   The Y position of the respawn
      */
-  die: function (respawnHP, respawnX, respawnY) {
+  die: function (respawnX, respawnY) {
     "use strict";
     if (me.game.HASH.debug === true) {
-      console.info("Player " + this.id + " died.");
+      console.info("Player " + this.playerId + " died.");
     }
 
     // TODO Add this animation

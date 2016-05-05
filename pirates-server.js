@@ -96,35 +96,46 @@ io.on('connection', function (socket) {
         for(var i=0; i < toUpdate.length; i++){
           toUpdate[i].emit('update', game.GetList());
         }
-/*
+
         // Ensure players are marked dead only once
-        for (var p = 0, l = game.GetList; i < l.length; ++i) {
-          l[p].dead = false;
+        var l = game.GetList();
+        for (var i in l) {
+          l[i].dead = false;
+          l[i].attack = undefined;
         }
-*/
+
         toUpdate = [];
       }, 50);
     }
   });
 
-  socket.on('updatePlayer', function(p){
+  socket.on('updatePlayer', function(p) {
     var player = game.Get(p.id);
-    player.pos.x = p.player.x;
-    player.pos.y = p.player.y;
-    player.vel.x = p.player.velX;
-    player.vel.y = p.player.velY;
-    player.currentAnimation = p.player.currentAnimation;
-    player.lastMaj = p.player.lastMaj;
-    player.attack = p.player.attack;
-/*
-    // Handle attacks
-    if (player.attack) {
-      // TODO check attacks to avoid cheating
-      game.Get(player.attack).hurt();
+    
+    /* Check if the player is alive.
+     * If not, the update is probably prior to the death of the player:
+     * we must ignore it to prevent a skipping of the respawn
+     */
+    if (player.spawned || p.player.respawned) {
+      player.spawned = true;
+      player.pos.x = p.player.x;
+      player.pos.y = p.player.y;
+      player.vel.x = p.player.velX;
+      player.vel.y = p.player.velY;
+      player.currentAnimation = p.player.currentAnimation;
+      player.lastMaj = p.player.lastMaj;
+      player.attack = p.player.attack;
+
+      // Handle attacks
+      if (player.attack) {
+        // TODO check attacks to avoid cheating
+        game.Get(player.attack).hurt();
+      }
+      //TODO update other params
     }
-    //TODO update other params
-*/
+    
     toUpdate.push(socket);
+      
   });
 
   socket.on('disconnect', function() {

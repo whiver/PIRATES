@@ -66,12 +66,17 @@ game.Player = game.Character.extend({
     this._super(game.Character, 'hurt', [hp]);
     this.hp = hp;
   },
-
+  
   /** @inheritdoc */
-  die: function (respawnHP, respawnX, respawnY) {
-    "use strict";
+  die: function (respawnX, respawnY) {
     this._super(game.Character, 'die', [respawnX, respawnY]);
-    this.hp = respawnHP;
+    
+    /* We must notify the server that we do have received the respawn
+     * task: until the server get this confirmation, it will ignore
+     * this client's update to prevent the player from skipping the
+     * respawn between to updates
+     */
+    me.state.current().updatePayload.respawned = true;
   },
 
   /**

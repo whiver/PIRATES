@@ -42,6 +42,7 @@
       this.hp = DEFAULT_HP;
       this.dmg = DEFAULT_DMG;
       this.dead = false;
+      this.spawned = true;
       this.healSpeed = DEFAULT_HEAL_SPEED;
       this.currentAnimation = DEFAULT_ANIMATION;
       this.points = 0;
@@ -50,7 +51,8 @@
       this.lastMaj = Date.now();
 
       // Initialize the position with de default one
-      this.pos = this.defaultPos;
+      this.pos = {};
+      this.resetPosition();
     }
 
     //------------------------ Getters / Setters -------------------------------
@@ -96,11 +98,17 @@
       if (this.hp <= 0) {
         // Mark the player as dead
         this.dead = true;
+        this.spawned = false;
 
         // Reset his properties
         this.hp = DEFAULT_HP;
-        this.pos = this.defaultPos;
+        this.resetPosition();
       }
+    }
+    
+    resetPosition () {
+      this.pos.x = this.defaultPos.x;
+      this.pos.y = this.defaultPos.y;
     }
 
     /**
