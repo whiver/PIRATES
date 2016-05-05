@@ -76,10 +76,10 @@ var game = {
         var p = param[i];
 
         if(p.id === playerId){
-          players[p.id] = new game.Player(p.pos.x, p.pos.y, p.hp, p.id, {frameheight: 32, framewidth: 30, image: "pirates", width: 30, height:32});
+          players[p.id] = new game.Player(p.pos.x, p.pos.y, p.hp, p.id);
         }
         else{
-          players[p.id] = new game.OtherPlayer(p.pos.x, p.pos.y, p.id, {frameheight: 32, framewidth: 30, image: "pirates", width: 30, height:32});
+          players[p.id] = new game.OtherPlayer(p.pos.x, p.pos.y, p.id);
         }
       }
 
@@ -102,8 +102,8 @@ var game = {
       me.state.change(me.state.PLAY, players, playerId);
 
       document.getElementsByClassName("overPanel")[0].style.display = "none";
-      document.getElementsByClassName("MemberPanel")[0].style.display = "none";	
+      document.getElementsByClassName("MemberPanel")[0].style.display = "none"; 
     });
-	
+  
   }
 };

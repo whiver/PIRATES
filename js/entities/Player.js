@@ -29,13 +29,12 @@ game.Player = game.Character.extend({
    * @param {number} id  The ID of the player
    * @param {object} settings
    */
-  init:function (x, y, hp, id, settings) {
-    // call the constructor
-    this._super(game.Character, 'init', [x, y, id, settings]);
-
-    // Properties
-    this.hp = hp;
+  init:function (x, y, hp, id) {
+    "use strict";
     
+    // call the constructor
+    this._super(game.Character, 'init', [x, y, id]);
+
     // define a basic walking animation (using all frames)
     this.characterRenderable.addAnimation("downWalk",  [0, 1, 2]);
     this.characterRenderable.addAnimation("upWalk",  [36, 37, 38]);
@@ -45,9 +44,56 @@ game.Player = game.Character.extend({
     this.characterRenderable.addAnimation("stand", [1]);
     // set the standing animation as default
     this.characterRenderable.setCurrentAnimation("stand");
+    
+    // ensure the player is updated even when outside of the viewport
+    this.alwaysUpdate = true;
 
     // Add the weapon
     this.setWeapon();
+    
+    // Add the healthbar
+    this.lifebar = {
+      life: this.renderable.addChild(
+        new me.Sprite(0, -18, {image: me.loader.getImage("lifebar")})
+      ),
+      
+      dmg: this.renderable.addChild(
+        new me.Sprite(1, -18, {image: me.loader.getImage("lifebar_dmg")})
+      ),
+      
+      lifeWidth: 28,
+    }
+    
+    // Hide the damage bar at the beginning
+    this.lifebar.dmg.scale(0.1, 1);
+    
+    // HP support
+    Object.defineProperty(this, "hpMax", {
+      value: hp
+    });
+    var currentHp = this.hpMax;
+    
+    // Update the lifebar at every modification
+    Object.defineProperty(this, "hp", {
+      set: function (val) {
+        currentHp = val;
+        
+        if (currentHp === this.hpMax) {
+          this.lifebar.dmg.alpha = 0;
+          this.lifebar.dmg.pos.x = 1;
+        } else {
+          this.lifebar.dmg.alpha = 1;
+          var sizeRatio = 1 - val / this.hpMax;
+          this.lifebar.dmg.scale(sizeRatio, 1);
+          this.lifebar.dmg.pos.x = (this.lifebar.lifeWidth - (this.lifebar.lifeWidth * sizeRatio)) / 2;
+        }
+        
+      },
+      get: function () {
+        return currentHp;
+      }
+    });
+    
   },
   
   /**
@@ -58,13 +104,6 @@ game.Player = game.Character.extend({
     
     // Add the collision shape and store its index to find it later
     this.weapon.bodyIndex = this.body.addShape(this.weapon.defaultHitboxPos.right) - 1;
-  },
-
-  /** @inheritdoc */
-  hurt: function (hp) {
-    "use strict";
-    this._super(game.Character, 'hurt', [hp]);
-    this.hp = hp;
   },
   
   /** @inheritdoc */

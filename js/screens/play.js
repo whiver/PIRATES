@@ -104,16 +104,16 @@ game.PlayScreen = me.ScreenObject.extend({
           }
         } else {
           // Informations about the main player
+          t.players[p.id].hp = p.hp;
+          
           if (p.attack !== undefined) {
             if (me.game.HASH.debug === true) {
               console.info("Attack action accepted.");
             }
-            
-            t.players[p.id].hp = p.hp;
 
             // Hurt the player
             var target = t.players[p.attack];
-            target.hurt(target.hp);
+            target.hurt();
           }
         }
       }
