@@ -66,6 +66,8 @@ io.on('connection', function (socket) {
 
     if(idPlayer !== -1) {
       console.log('Player ' + pseudo + ' joined the game.');
+      socket.idPlayer = idPlayer;
+      
       // Send pseudo to the others players
       io.emit('memberConnected', pseudo);
 
@@ -108,16 +110,21 @@ io.on('connection', function (socket) {
       }, 50);
     }
   });
+  
+  socket.on('spawned', function (p) {
+    var player = game.Get(socket.idPlayer);
+    player.spawned = true;
+    console.log("Player " + socket.pseudo + " respawned.");
+  });
 
   socket.on('updatePlayer', function(p) {
-    var player = game.Get(p.id);
+    var player = game.Get(socket.idPlayer);
     
     /* Check if the player is alive.
      * If not, the update is probably prior to the death of the player:
      * we must ignore it to prevent a skipping of the respawn
      */
-    if (player.spawned || p.player.respawned) {
-      player.spawned = true;
+    if (player.spawned) {
       player.pos.x = p.player.x;
       player.pos.y = p.player.y;
       player.vel.x = p.player.velX;
@@ -132,9 +139,9 @@ io.on('connection', function (socket) {
         game.Get(player.attack).hurt();
       }
       //TODO update other params
+      toUpdate.push(socket);
     }
     
-    toUpdate.push(socket);
       
   });
 

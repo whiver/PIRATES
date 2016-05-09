@@ -115,7 +115,7 @@ game.Player = game.Character.extend({
      * this client's update to prevent the player from skipping the
      * respawn between to updates
      */
-    me.state.current().updatePayload.respawned = true;
+    socket.emit('spawned');
   },
 
   /**

@@ -75,6 +75,10 @@ game.PlayScreen = me.ScreenObject.extend({
            * the server has not received the respawn confirmation yet,
            * so we don't update the player
            */
+          if (me.game.HASH.debug === true) {
+            console.info("Player " + p.id + " is not spawned: update skipped.");
+          }
+          
           continue;
         } else if(p.id !== t.playerId) {
           // Informations about other players
@@ -133,7 +137,6 @@ game.PlayScreen = me.ScreenObject.extend({
 
       // Reset the object's optional properties for the next update
       t.updatePayload.attack = undefined;
-      t.updatePayload.respawned = undefined;
     });
 
     // add our HUD to the game world
