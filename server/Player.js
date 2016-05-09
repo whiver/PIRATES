@@ -42,7 +42,6 @@
       this.hp = DEFAULT_HP;
       this.dmg = DEFAULT_DMG;
       this.dead = false;
-      this.spawned = true;
       this.healSpeed = DEFAULT_HEAL_SPEED;
       this.currentAnimation = DEFAULT_ANIMATION;
       this.points = 0;
@@ -98,7 +97,6 @@
       if (this.hp <= 0) {
         // Mark the player as dead
         this.dead = true;
-        this.spawned = false;
 
         // Reset his properties
         this.hp = DEFAULT_HP;

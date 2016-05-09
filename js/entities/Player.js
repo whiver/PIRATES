@@ -116,6 +116,9 @@ game.Player = game.Character.extend({
      * respawn between to updates
      */
     socket.emit('spawned');
+    if (me.game.HASH.debug === true) {
+      console.info("Respawn confirmation sent to server.");
+    }
   },
 
   /**

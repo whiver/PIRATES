@@ -61,6 +61,7 @@ game.PlayScreen = me.ScreenObject.extend({
 
     //On each update event, update all the other players
     socket.on('update', function(param){
+      var target;
       var now = Date.now();
 
       // Loop over each player to update
@@ -99,7 +100,7 @@ game.PlayScreen = me.ScreenObject.extend({
             t.players[p.id].attack();
 
             // Hurt the player
-            var target = t.players[p.attack];
+            target = t.players[p.attack];
             target.hurt();
           }
 
@@ -116,7 +117,7 @@ game.PlayScreen = me.ScreenObject.extend({
             }
 
             // Hurt the player
-            var target = t.players[p.attack];
+            target = t.players[p.attack];
             target.hurt();
           }
         }

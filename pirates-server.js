@@ -113,10 +113,13 @@ io.on('connection', function (socket) {
   
   socket.on('spawned', function (p) {
     var player = game.Get(socket.idPlayer);
-    player.spawned = true;
+    player.dead = false;
     console.log("Player " + socket.pseudo + " respawned.");
   });
 
+  /**
+   * Update the game using each client's informations
+   */
   socket.on('updatePlayer', function(p) {
     var player = game.Get(socket.idPlayer);
     
@@ -124,7 +127,7 @@ io.on('connection', function (socket) {
      * If not, the update is probably prior to the death of the player:
      * we must ignore it to prevent a skipping of the respawn
      */
-    if (player.spawned) {
+    if (!player.dead) {
       player.pos.x = p.player.x;
       player.pos.y = p.player.y;
       player.vel.x = p.player.velX;
@@ -139,9 +142,9 @@ io.on('connection', function (socket) {
         game.Get(player.attack).hurt();
       }
       //TODO update other params
-      toUpdate.push(socket);
     }
-    
+    toUpdate.push(socket);
+
       
   });
 
