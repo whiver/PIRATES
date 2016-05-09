@@ -20,13 +20,21 @@ along with PIRATES.  If not, see <http://www.gnu.org/licenses/>.
 */
 game.Player = game.Character.extend({
 
+
   /**
-  * constructor
-  */
-  init:function (x, y, id, settings) {
-    // call the constructor
-    this._super(game.Character, 'init', [x, y, id, settings]);
+   * Constructor
+   * @param {number} x   The initial X position of the player
+   * @param {number} y   The initial Y position of the player
+   * @param {number} hp  The number of HP the player begin with
+   * @param {number} id  The ID of the player
+   * @param {object} settings
+   */
+  init:function (x, y, hp, id) {
+    "use strict";
     
+    // call the constructor
+    this._super(game.Character, 'init', [x, y, id]);
+
     // define a basic walking animation (using all frames)
     this.characterRenderable.addAnimation("downWalk",  [0, 1, 2]);
     this.characterRenderable.addAnimation("upWalk",  [36, 37, 38]);
@@ -36,9 +44,56 @@ game.Player = game.Character.extend({
     this.characterRenderable.addAnimation("stand", [1]);
     // set the standing animation as default
     this.characterRenderable.setCurrentAnimation("stand");
+    
+    // ensure the player is updated even when outside of the viewport
+    this.alwaysUpdate = true;
 
     // Add the weapon
     this.setWeapon();
+    
+    // Add the healthbar
+    this.lifebar = {
+      life: this.renderable.addChild(
+        new me.Sprite(0, -18, {image: me.loader.getImage("lifebar")})
+      ),
+      
+      dmg: this.renderable.addChild(
+        new me.Sprite(1, -18, {image: me.loader.getImage("lifebar_dmg")})
+      ),
+      
+      lifeWidth: 28,
+    }
+    
+    // Hide the damage bar at the beginning
+    this.lifebar.dmg.scale(0.1, 1);
+    
+    // HP support
+    Object.defineProperty(this, "hpMax", {
+      value: hp
+    });
+    var currentHp = this.hpMax;
+    
+    // Update the lifebar at every modification
+    Object.defineProperty(this, "hp", {
+      set: function (val) {
+        currentHp = val;
+        
+        if (currentHp === this.hpMax) {
+          this.lifebar.dmg.alpha = 0;
+          this.lifebar.dmg.pos.x = 1;
+        } else {
+          this.lifebar.dmg.alpha = 1;
+          var sizeRatio = 1 - val / this.hpMax;
+          this.lifebar.dmg.scale(sizeRatio, 1);
+          this.lifebar.dmg.pos.x = (this.lifebar.lifeWidth - (this.lifebar.lifeWidth * sizeRatio)) / 2;
+        }
+        
+      },
+      get: function () {
+        return currentHp;
+      }
+    });
+    
   },
   
   /**
@@ -49,6 +104,21 @@ game.Player = game.Character.extend({
     
     // Add the collision shape and store its index to find it later
     this.weapon.bodyIndex = this.body.addShape(this.weapon.defaultHitboxPos.right) - 1;
+  },
+  
+  /** @inheritdoc */
+  die: function (respawnX, respawnY) {
+    this._super(game.Character, 'die', [respawnX, respawnY]);
+    
+    /* We must notify the server that we do have received the respawn
+     * task: until the server get this confirmation, it will ignore
+     * this client's update to prevent the player from skipping the
+     * respawn between to updates
+     */
+    socket.emit('spawned');
+    if (me.game.HASH.debug === true) {
+      console.info("Respawn confirmation sent to server.");
+    }
   },
 
   /**
