@@ -32,9 +32,10 @@ game.LoadingScreen = me.ScreenObject.extend({
 
     // progress bar
     var progressBar = new game.ProgressBar(
-      new me.Vector2d(),
+      new me.Vector2d(me.video.renderer.getWidth() / 2, me.video.renderer.getHeight() / 2),
       me.video.renderer.getWidth(),
-      me.video.renderer.getHeight()
+      4,
+      false
     );
 
     this.loaderHdlr = me.event.subscribe(

@@ -19,16 +19,33 @@
   // a basic progress bar object
   game.ProgressBar = me.Renderable.extend({
 
-    init: function (v, w, h) {
+    /**
+     * Constructor
+     * @param {me.Vector2D} v The position of the middle of the progress bar in the screen
+     * @param {number}  w     The width of the progress bar
+     * @param {number}  h     The height of the progress bar
+     * @param {string}  color1  The color of the progress
+     * @param {string}  color2  The color of the background
+     * @param {boolean} leftToRight Should the bar progress to the right?
+     */
+    init: function (v, w, h, color1, color2, leftToRight) {
       me.Renderable.prototype.init.apply(this, [v.x, v.y, w, h]);
       // flag to know if we need to refresh the display
       this.invalidate = false;
 
-      // default progress bar height
-      this.barHeight = 4;
-
       // current progress
       this.progress = 0;
+
+      // Colors of the progress bar
+      if (color1 === undefined) {
+        color1 = "black";
+
+        if (color2 === undefined) {
+          color2 = "#55aa00";
+        }
+      }
+      this.colors = [color1, color2];
+      this.ltr = leftToRight !== false;
     },
 
     // make sure the screen is refreshed every frame
@@ -52,11 +69,16 @@
     // draw function
     draw: function (renderer) {
       // draw the progress bar
-      renderer.setColor("black");
-      renderer.fillRect(0, (this.height / 2) - (this.barHeight / 2), this.width, this.barHeight);
+      renderer.setColor(this.colors[0]);
+      renderer.fillRect(this.pos.x - this.width / 2, this.pos.y - this.height / 2, this.width, this.height);
 
-      renderer.setColor("#55aa00");
-      renderer.fillRect(2, (this.height / 2) - (this.barHeight / 2), this.progress, this.barHeight);
+      renderer.setColor(this.colors[1]);
+
+      if (this.ltr) {
+        renderer.fillRect(this.pos.x - this.width / 2, this.pos.y - this.height / 2, this.progress, this.height);
+      } else {
+        renderer.fillRect(this.pos.x + this.width / 2 - this.progress, this.pos.y - this.height / 2, this.progress, this.height);
+      }
 
       renderer.setColor("white");
     }
