@@ -66,7 +66,8 @@ io.on('connection', function (socket) {
 
     if(idPlayer !== -1) {
       console.log('Player ' + pseudo + ' joined the game.');
-
+      socket.idPlayer = idPlayer;
+      
       // Send pseudo to the others players
       io.emit('memberConnected', pseudo);
 
@@ -96,25 +97,55 @@ io.on('connection', function (socket) {
       setInterval(function(){
         for(var i=0; i < toUpdate.length; i++){
           toUpdate[i].emit('update', game.GetList());
-      }
+        }
+
+        // Ensure players are marked dead only once
+        var l = game.GetList();
+        for (var i in l) {
+          l[i].dead = false;
+          l[i].attack = undefined;
+        }
 
         toUpdate = [];
       }, 50);
     }
   });
+  
+  socket.on('spawned', function (p) {
+    var player = game.Get(socket.idPlayer);
+    player.dead = false;
+    console.log("Player " + socket.pseudo + " respawned.");
+  });
 
-  socket.on('updatePlayer', function(p){
-    var player = game.Get(p.id);
-    player.pos.x = p.player.x;
-    player.pos.y = p.player.y;
-    player.vel.x = p.player.velX;
-    player.vel.y = p.player.velY;
-    player.currentAnimation = p.player.currentAnimation;
-    player.lastMaj = p.player.lastMaj;
-    player.attack = p.player.attack;
-    //TODO update other params
+  /**
+   * Update the game using each client's informations
+   */
+  socket.on('updatePlayer', function(p) {
+    var player = game.Get(socket.idPlayer);
+    
+    /* Check if the player is alive.
+     * If not, the update is probably prior to the death of the player:
+     * we must ignore it to prevent a skipping of the respawn
+     */
+    if (!player.dead) {
+      player.pos.x = p.player.x;
+      player.pos.y = p.player.y;
+      player.vel.x = p.player.velX;
+      player.vel.y = p.player.velY;
+      player.currentAnimation = p.player.currentAnimation;
+      player.lastMaj = p.player.lastMaj;
+      player.attack = p.player.attack;
 
+      // Handle attacks
+      if (player.attack) {
+        // TODO check attacks to avoid cheating
+        game.Get(player.attack).hurt();
+      }
+      //TODO update other params
+    }
     toUpdate.push(socket);
+
+      
   });
 
   socket.on('disconnect', function() {

@@ -26,7 +26,15 @@ game.Character = me.Entity.extend({
    * @param {number} id       The server's ID of the character
    * @param {object} settings Additional properties to be passed to the entity
    */
-  init:function (x, y, id, settings) {
+  init:function (x, y, id) {
+    var settings = {
+      frameheight: 32,
+      framewidth: 30,
+      image: "pirates",
+      width: 30,
+      height:32
+    };
+    
     // call the constructor
     this._super(me.Entity, 'init', [x, y , settings]);
     
@@ -41,9 +49,6 @@ game.Character = me.Entity.extend({
     this.body.setVelocity(2, 2);
     this.body.gravity = 0;
     this.body.collisionType = me.collision.types.PLAYER_OBJECT;
-
-    // ensure the player is updated even when outside of the viewport
-    this.alwaysUpdate = true;
 
     // Replace the renderable part by a container to allow rendering multiple shapes
     this.renderable = new me.Container(0,  0, settings.width, settings.height);
@@ -145,7 +150,7 @@ game.Character = me.Entity.extend({
   
   /**
    * Hurts the player by dealing it some damages
-   * @param {number}  hp  The amount of damages
+   * @param {number}  hp  The remaining HP of the player
    */
   hurt: function (hp) {
     this.characterRenderable.flicker(300);
@@ -162,6 +167,23 @@ game.Character = me.Entity.extend({
 
     // Make all other objects solid
     return true;
+  },
+
+  /**
+   * Kill the player, displaying the corresponding animation, then respawn it at the given location
+   * @param {number} respawnX   The X position of the respawn
+   * @param {number} respawnY   The Y position of the respawn
+     */
+  die: function (respawnX, respawnY) {
+    "use strict";
+    if (me.game.HASH.debug === true) {
+      console.info("Player " + this.playerId + " died.");
+    }
+
+    // TODO Add this animation
+    //this.characterRenderable.setCurrentAnimation("die");
+    this.pos.x = respawnX;
+    this.pos.y = respawnY;
   },
   
   /**

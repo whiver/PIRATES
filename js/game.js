@@ -27,7 +27,7 @@ var game = {
   // Run on page load.
   "onload" : function () {
     // Initialize the video.
-    if (!me.video.init(640, 480, {wrapper : "screen", scale : "auto"})) {
+    if (!me.video.init(960, 540, {wrapper : "screen", scale : "auto"})) {
       alert("Your browser does not support HTML5 canvas.");
       return;
     }
@@ -48,6 +48,9 @@ var game = {
     // Load the resources.
     me.loader.preload(game.resources);
 
+    // Emplace our own loading screen
+    me.state.set(me.state.LOADING, new game.LoadingScreen());
+
     // Initialize melonJS and display a loading screen.
     me.state.change(me.state.LOADING);
   },
@@ -55,7 +58,6 @@ var game = {
   // Run on game resources loaded.
   "loaded" : function () {
     // Game states declarations
-    me.state.set(me.state.MENU, new game.TitleScreen());
     me.state.set(me.state.PLAY, new game.PlayScreen());
 
     // Pool entries definitions
@@ -76,10 +78,10 @@ var game = {
         var p = param[i];
 
         if(p.id === playerId){
-          players[p.id] = new game.Player(p.pos.x, p.pos.y, p.id, {frameheight: 32, framewidth: 30, image: "pirates", width: 30, height:32});
+          players[p.id] = new game.Player(p.pos.x, p.pos.y, p.hp, p.id);
         }
         else{
-          players[p.id] = new game.OtherPlayer(p.pos.x, p.pos.y, p.id, {frameheight: 32, framewidth: 30, image: "pirates", width: 30, height:32});
+          players[p.id] = new game.OtherPlayer(p.pos.x, p.pos.y, p.id);
         }
       }
 
@@ -102,8 +104,8 @@ var game = {
       me.state.change(me.state.PLAY, players, playerId);
 
       document.getElementsByClassName("overPanel")[0].style.display = "none";
-      document.getElementsByClassName("MemberPanel")[0].style.display = "none";	
+      document.getElementsByClassName("MemberPanel")[0].style.display = "none"; 
     });
-	
+  
   }
 };

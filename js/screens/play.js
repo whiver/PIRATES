@@ -27,7 +27,7 @@ game.PlayScreen = me.ScreenObject.extend({
     });
 
     /**
-     * The container of all characters in the game, creatd in Tiled
+     * The container of all characters in the game, created in Tiled
      * @type {me.Container}
      */
     this.playerLayer = me.game.world.getChildByName("entities")[0];
@@ -61,13 +61,27 @@ game.PlayScreen = me.ScreenObject.extend({
 
     //On each update event, update all the other players
     socket.on('update', function(param){
+      var target;
       var now = Date.now();
 
       // Loop over each player to update
       for(var i in param) {
         var p = param[i];
-
-        if(p.id !== t.playerId) {
+        
+        if (p.dead) {
+          // Kill the player
+          t.players[p.id].die(p.pos.x, p.pos.y);
+        } else if (p.spawned === false) {
+          /* If the player is not dead and not spawned, it means that
+           * the server has not received the respawn confirmation yet,
+           * so we don't update the player
+           */
+          if (me.game.HASH.debug === true) {
+            console.info("Player " + p.id + " is not spawned: update skipped.");
+          }
+          
+          continue;
+        } else if(p.id !== t.playerId) {
           // Informations about other players
 
           var dt = now - p.lastMaj;
@@ -86,7 +100,8 @@ game.PlayScreen = me.ScreenObject.extend({
             t.players[p.id].attack();
 
             // Hurt the player
-            t.players[p.attack].hurt();
+            target = t.players[p.attack];
+            target.hurt();
           }
 
           if(!isNaN(dt)){
@@ -94,26 +109,30 @@ game.PlayScreen = me.ScreenObject.extend({
           }
         } else {
           // Informations about the main player
+          t.players[p.id].hp = p.hp;
+          
           if (p.attack !== undefined) {
             if (me.game.HASH.debug === true) {
               console.info("Attack action accepted.");
             }
 
             // Hurt the player
-            t.players[p.attack].hurt();
+            target = t.players[p.attack];
+            target.hurt();
           }
         }
       }
+      
       //To force the drawing of each object by the engine
       me.game.repaint();
 
       // Send the latest player's data to the server
-      t.updatePayload.x = t.players[t.playerId].pos._x,
-      t.updatePayload.y = t.players[t.playerId].pos._y,
-      t.updatePayload.velX = t.players[t.playerId].body.vel.x,
-      t.updatePayload.velY = t.players[t.playerId].body.vel.y,
-      t.updatePayload.lastMaj = Date.now(),
-      t.updatePayload.currentAnimation = t.players[t.playerId].characterRenderable.current.name
+      t.updatePayload.x = t.players[t.playerId].pos._x;
+      t.updatePayload.y = t.players[t.playerId].pos._y;
+      t.updatePayload.velX = t.players[t.playerId].body.vel.x;
+      t.updatePayload.velY = t.players[t.playerId].body.vel.y;
+      t.updatePayload.lastMaj = Date.now();
+      t.updatePayload.currentAnimation = t.players[t.playerId].characterRenderable.current.name;
 
       socket.emit('updatePlayer', {id: t.playerId, player: t.updatePayload});
 

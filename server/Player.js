@@ -18,6 +18,11 @@
 (function(){
   "use strict";
 
+  const DEFAULT_HP          = 100;
+  const DEFAULT_DMG         = 25;
+  const DEFAULT_HEAL_SPEED  = 0.5;
+  const DEFAULT_ANIMATION   = "stand";
+
   /**
    * Represent a player in a game
    */
@@ -34,14 +39,19 @@
     constructor(pseudo, id, px, py){
       this.pseudo = pseudo;
       this.id = id;
-      this.hp = 100;
-      this.dmg = 25;
-      this.healSpeed = 0.5;
-      this.currentAnimation = "stand";
+      this.hp = DEFAULT_HP;
+      this.dmg = DEFAULT_DMG;
+      this.dead = false;
+      this.healSpeed = DEFAULT_HEAL_SPEED;
+      this.currentAnimation = DEFAULT_ANIMATION;
       this.points = 0;
-      this.pos = {x: px, y: py};
+      this.defaultPos = {x: px, y: py};
       this.vel = {x: 0, y: 0};
       this.lastMaj = Date.now();
+
+      // Initialize the position with de default one
+      this.pos = {};
+      this.resetPosition();
     }
 
     //------------------------ Getters / Setters -------------------------------
@@ -80,6 +90,23 @@
      */
     Dmg(){
       return this.dmg;
+    }
+
+    hurt () {
+      this.hp -= this.dmg;
+      if (this.hp <= 0) {
+        // Mark the player as dead
+        this.dead = true;
+
+        // Reset his properties
+        this.hp = DEFAULT_HP;
+        this.resetPosition();
+      }
+    }
+    
+    resetPosition () {
+      this.pos.x = this.defaultPos.x;
+      this.pos.y = this.defaultPos.y;
     }
 
     /**
