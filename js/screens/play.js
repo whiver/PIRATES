@@ -51,82 +51,79 @@ game.PlayScreen = me.ScreenObject.extend({
 
 
     //Emit first player data
-    this.updatePayload = {
-      x:t.players[t.playerId].pos._x,
-      y:t.players[t.playerId].pos._y,
-      velX:t.players[t.playerId].body.vel.x,
-      velY:t.players[t.playerId].body.vel.y
-    };
-    socket.emit('updatePlayer', {id: t.playerId, player: this.updatePayload});
+    this.updatePayload = {};
 
-    //On each update event, update all the other players
-    socket.on('update', function(param){
-      var target;
+    /**
+     * Update the other players using the informations sent by the server
+     * @param {object}  remotePlayer  The player object of the server to update
+     */
+    socket.on('update', function(remotePlayer) {
       var now = Date.now();
 
-      // Loop over each player to update
-      for(var i in param) {
-        var p = param[i];
-        
-        if (p.dead) {
-          // Kill the player
-          t.players[p.id].die(p.pos.x, p.pos.y);
-        } else if (p.spawned === false) {
-          /* If the player is not dead and not spawned, it means that
-           * the server has not received the respawn confirmation yet,
-           * so we don't update the player
-           */
-          if (me.game.HASH.debug === true) {
-            console.info("Player " + p.id + " is not spawned: update skipped.");
-          }
-          
-          continue;
-        } else if(p.id !== t.playerId) {
-          // Informations about other players
+      var dt = now - remotePlayer.lastMaj;
 
-          var dt = now - p.lastMaj;
+      // Update the players informations
+      t.players[remotePlayer.id].body.vel.set(remotePlayer.vel.x, remotePlayer.vel.y);
+      t.players[remotePlayer.id].pos.x = remotePlayer.pos.x;
+      t.players[remotePlayer.id].pos.y = remotePlayer.pos.y;
 
-          // Update the players informations
-          t.players[p.id].body.vel.set(p.vel.x, p.vel.y);
-          t.players[p.id].pos.x = p.pos.x;
-          t.players[p.id].pos.y = p.pos.y;
-
-          // Run an attack if necessary
-          if (p.attack !== undefined) {
-            if (me.game.HASH.debug === true) {
-              console.info("Attack information received: " + p.id + " > " + p.attack);
-            }
-
-            t.players[p.id].attack();
-
-            // Hurt the player
-            target = t.players[p.attack];
-            target.hurt();
-          }
-
-          if(!isNaN(dt)){
-            t.players[p.id].update(dt);
-          }
-        } else {
-          // Informations about the main player
-          t.players[p.id].hp = p.hp;
-          
-          if (p.attack !== undefined) {
-            if (me.game.HASH.debug === true) {
-              console.info("Attack action accepted.");
-            }
-
-            // Hurt the player
-            target = t.players[p.attack];
-            target.hurt();
-          }
-        }
+      if (!isNaN(dt)) {
+        t.players[remotePlayer.id].update(dt);
       }
-      
+
       //To force the drawing of each object by the engine
       me.game.repaint();
+    });
 
-      // Send the latest player's data to the server
+    /**
+     * Listen for confirmation from the server of main player's attacks
+     * @param {object}  infos Informations about the attack:
+     *                        - from: the id of the attacker
+     *                        - target: the id of the target
+     *                        - hp: the remaining hp of the target
+     */
+    socket.on("attackConfirmation", function (infos) {
+      var target;
+
+      if (infos.from === t.playerId) {
+        // If we are the attacker
+        if (me.game.HASH.debug === true) {
+          console.info("Attack action accepted.");
+        }
+        target = t.players[infos.target];
+        target.hurt();
+      } else {
+        // If another player is the attacker
+
+        if (me.game.HASH.debug === true) {
+          console.info("Attack information received: " + infos.from + " > " + infos.target);
+        }
+
+        t.players[infos.from].attack();
+
+        // Hurt the player
+        t.players[infos.target].hurt(infos.hp);
+      }
+    });
+
+    /**
+     * Handle the death of a player when the server ask it
+     * @param {object}  p The player who must die
+     */
+    socket.on("death", function (p) {
+      t.players[p.id].die(p.pos.x, p.pos.y);
+      
+      if (me.game.HASH.debug === true) {
+        if (p.id === this.playerId) {
+          console.info("You died.");
+        } else {
+          console.info("Player " + p.id + " died.");
+        }
+      }
+    });
+    
+    // Send the player's informations to the server
+    setInterval(function () {
       t.updatePayload.x = t.players[t.playerId].pos._x;
       t.updatePayload.y = t.players[t.playerId].pos._y;
       t.updatePayload.velX = t.players[t.playerId].body.vel.x;
@@ -135,10 +132,7 @@ game.PlayScreen = me.ScreenObject.extend({
       t.updatePayload.currentAnimation = t.players[t.playerId].characterRenderable.current.name;
 
       socket.emit('updatePlayer', {id: t.playerId, player: t.updatePayload});
-
-      // Reset the object's optional properties for the next update
-      t.updatePayload.attack = undefined;
-    });
+    }, 100);
 
     // add our HUD to the game world
     this.HUD = new game.HUD.Container();
