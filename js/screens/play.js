@@ -33,11 +33,11 @@ game.PlayScreen = me.ScreenObject.extend({
     this.playerLayer = me.game.world.getChildByName("entities")[0];
 
     if (me.game.HASH.debug === true) {
-      console.assert(this.playerLayer !== undefined, 'No children named '
-        + '"entities" found. The Tiled map must include such a layer to add '
-        + 'the players to the game and the layer must not be empty.', this);
-      console.assert(this.playerLayer instanceof me.Container, 'The "entities" '
-        + 'Tiled layer must be an object layer to allow adding players inside it.', this);
+      console.assert(this.playerLayer !== undefined, 'No children named ' +
+        '"entities" found. The Tiled map must include such a layer to add ' +
+        'the players to the game and the layer must not be empty.', this);
+      console.assert(this.playerLayer instanceof me.Container, 'The "entities" ' +
+        'Tiled layer must be an object layer to allow adding players inside it.', this);
     }
 
     var t = this;
