@@ -90,24 +90,9 @@ io.on('connection', function (socket) {
   //Event received when a player is ready
   socket.on('ready', function(){
     nbReady++;
-    if(nbReady >= nbPlayersNeeded){
+    if(nbReady == nbPlayersNeeded){
       //Start the game for everyone
       io.emit('start');
-
-      setInterval(function(){
-        for(var i=0; i < toUpdate.length; i++){
-          toUpdate[i].emit('update', game.GetList());
-        }
-
-        // Ensure players are marked dead only once
-        var l = game.GetList();
-        for (var i in l) {
-          l[i].dead = false;
-          l[i].attack = undefined;
-        }
-
-        toUpdate = [];
-      }, 50);
     }
   });
   
@@ -115,6 +100,26 @@ io.on('connection', function (socket) {
     var player = game.Get(socket.idPlayer);
     player.dead = false;
     console.log("Player " + socket.pseudo + " respawned.");
+  });
+
+  socket.on("attack", function (targetId) {
+    var player = game.Get(socket.idPlayer);
+    var target = game.Get(targetId);
+    console.log("Player " + player.pseudo + " attacked " + target.pseudo);
+
+    // TODO check attacks to avoid cheating
+    target.hurt();
+
+    // Check if the target is dead
+    if (target.dead) {
+      io.emit("death", target);
+    }
+
+    io.emit("attackConfirmation", {
+      target: target.id,
+      from: player.id,
+      hp: target.hp
+    });
   });
 
   /**
@@ -134,18 +139,10 @@ io.on('connection', function (socket) {
       player.vel.y = p.player.velY;
       player.currentAnimation = p.player.currentAnimation;
       player.lastMaj = p.player.lastMaj;
-      player.attack = p.player.attack;
 
-      // Handle attacks
-      if (player.attack) {
-        // TODO check attacks to avoid cheating
-        game.Get(player.attack).hurt();
-      }
-      //TODO update other params
+      // Send the update to other clients
+      socket.broadcast.emit("update", player);
     }
-    toUpdate.push(socket);
-
-      
   });
 
   socket.on('disconnect', function() {

@@ -150,9 +150,8 @@ game.Character = me.Entity.extend({
   
   /**
    * Hurts the player by dealing it some damages
-   * @param {number}  hp  The remaining HP of the player
    */
-  hurt: function (hp) {
+  hurt: function () {
     this.characterRenderable.flicker(300);
   },
 

@@ -86,6 +86,17 @@ game.Player = game.Character.extend({
     this.weapon.bodyIndex = this.body.addShape(this.weapon.defaultHitboxPos.right) - 1;
   },
 
+  /**
+   * Handle damages inflicted to the player
+   * @param {number} remainingHP  The number of HP the player still have
+   * @override
+   */
+  hurt: function (remainingHP) {
+    "use strict";
+    this._super(game.Character, 'hurt');
+    this.hp = remainingHP;
+  },
+
   /** @inheritdoc */
   die: function (respawnX, respawnY) {
     this._super(game.Character, 'die', [respawnX, respawnY]);
@@ -174,7 +185,7 @@ game.Player = game.Character.extend({
       if (!!this.attacking && !this.hit && response.indexShapeB === this.weapon.bodyIndex) {
         // We hit another player
         if (me.game.HASH.debug === true) {
-          console.log("Hit:", "Player 1:", response.a, "Player 2:", response.b, "Details:", response);
+          console.log("Hit:", "Player 1:", response.a.playerId, "Player 2:", response.b.playerId, "Details:", response);
         }
 
         // Prevent further hits on this attack
@@ -187,7 +198,7 @@ game.Player = game.Character.extend({
           }
         }
 
-        me.state.current().updatePayload.attack = other.playerId;
+        socket.emit("attack", other.playerId);
       }
 
       return false;
