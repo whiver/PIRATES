@@ -90,7 +90,6 @@ game.PlayScreen = me.ScreenObject.extend({
           }
 
           if(!isNaN(dt)){
-            console.log(dt);
             t.players[p.id].update(dt);
           }
         } else {
