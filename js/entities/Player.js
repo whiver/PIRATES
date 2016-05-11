@@ -116,6 +116,8 @@ game.Player = game.Character.extend({
    * update the entity
    */
   update: function (dt) {
+    this.characterRenderable.animationpause = false;
+
     //Go left
     if (me.input.isKeyPressed('left')) {
       // flip the sprite on horizontal axis
@@ -163,7 +165,8 @@ game.Player = game.Character.extend({
 
     //Stand animation
     if (!me.input.isKeyPressed('up') && !me.input.isKeyPressed('down') && !me.input.isKeyPressed('left') && !me.input.isKeyPressed('right')) {
-      this.characterRenderable.setCurrentAnimation("stand");
+      this.characterRenderable.animationpause = true;
+      this.characterRenderable.setAnimationFrame(1);
     }
 
     if (me.input.isKeyPressed('attack')) {
