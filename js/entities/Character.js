@@ -54,6 +54,12 @@ game.Character = me.Entity.extend({
     this.renderable = new me.Container(0,  0, settings.width, settings.height);
     this.renderable.addChild(this.characterRenderable);
     this.renderable.autoSort = false;
+
+    // Define the animation names
+    Object.defineProperty(this, "DOWN_WALK", {value: "dw"});
+    Object.defineProperty(this, "UP_WALK", {value: "uw"});
+    Object.defineProperty(this, "SIDE_WALK", {value: "sw"});
+    Object.defineProperty(this, "STAND", {value: "st"});
   },
 
   /**
@@ -93,39 +99,35 @@ game.Character = me.Entity.extend({
 
       // Update the weapon's position to fit the player
       // FIXME Position is hard-coded
-      if (this.body.vel.x < 0) {
+      if (this.characterRenderable.lastflipX && this.characterRenderable.current.name === this.SIDE_WALK) {
         // Facing left
         this.weapon.flipX(true);
         this.weapon.pos.x = this.weapon.defaultWeaponPos.x - 17;
         this.weapon.pos.y = this.weapon.defaultWeaponPos.y;
         this.body.shapes[this.weapon.bodyIndex] = this.weapon.defaultHitboxPos.left;
-        this.body.updateBounds();
         attackAnimation = "attack_hor";
-      } else if (this.body.vel.x > 0) {
+      } else if (!this.characterRenderable.lastflipX && this.characterRenderable.current.name === this.SIDE_WALK) {
         // Facing right
         this.weapon.flipX(false);
         this.weapon.pos.x = this.weapon.defaultWeaponPos.x;
         this.weapon.pos.y = this.weapon.defaultWeaponPos.y;
         this.body.shapes[this.weapon.bodyIndex] = this.weapon.defaultHitboxPos.right;
-        this.body.updateBounds();
         attackAnimation = "attack_hor";
-      } else if (this.body.vel.y > 0) {
+      } else if (this.characterRenderable.current.name === this.DOWN_WALK || this.characterRenderable.current.name === this.STAND) {
         // Facing bottom
         this.weapon.flipX(false);
         this.weapon.flipY(true);
         this.weapon.pos.x = this.weapon.defaultWeaponPos.x - 5;
         this.weapon.pos.y = this.weapon.defaultWeaponPos.y + 10;
         this.body.shapes[this.weapon.bodyIndex] = this.weapon.defaultHitboxPos.bottom;
-        this.body.updateBounds();
         attackAnimation = "attack_ver";
-      } else if (this.body.vel.y < 0) {
+      } else if (this.characterRenderable.current.name === this.UP_WALK) {
         // Facing top
         this.weapon.flipX(false);
         this.weapon.flipY(false);
         this.weapon.pos.x = this.weapon.defaultWeaponPos.x - 5;
         this.weapon.pos.y = this.weapon.defaultWeaponPos.y - 5;
         this.body.shapes[this.weapon.bodyIndex] = this.weapon.defaultHitboxPos.top;
-        this.body.updateBounds();
           attackAnimation = "attack_ver";
       } else {
         // Player is not moving: we keep the same attack parameters

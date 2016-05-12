@@ -36,14 +36,14 @@ game.Player = game.Character.extend({
     this._super(game.Character, 'init', [x, y, id]);
 
     // define a basic walking animation (using all frames)
-    this.characterRenderable.addAnimation("downWalk", [0, 1, 2]);
-    this.characterRenderable.addAnimation("upWalk", [36, 37, 38]);
-    this.characterRenderable.addAnimation("sideWalk", [24, 25, 26]);
+    this.characterRenderable.addAnimation(this.DOWN_WALK, [0, 1, 2]);
+    this.characterRenderable.addAnimation(this.UP_WALK, [36, 37, 38]);
+    this.characterRenderable.addAnimation(this.SIDE_WALK, [24, 25, 26]);
 
     // define a standing animation (using the first frame)
-    this.characterRenderable.addAnimation("stand", [1]);
+    this.characterRenderable.addAnimation(this.STAND, [1]);
     // set the standing animation as default
-    this.characterRenderable.setCurrentAnimation("stand");
+    this.characterRenderable.setCurrentAnimation(this.STAND);
 
     // ensure the player is updated even when outside of the viewport
     this.alwaysUpdate = true;
@@ -125,8 +125,8 @@ game.Player = game.Character.extend({
       // update the entity velocity
       this.body.vel.x -= this.body.accel.x * me.timer.tick;
       // change to the walking animation
-      if (!this.characterRenderable.isCurrentAnimation("sideWalk")) {
-        this.characterRenderable.setCurrentAnimation("sideWalk");
+      if (!this.characterRenderable.isCurrentAnimation(this.SIDE_WALK)) {
+        this.characterRenderable.setCurrentAnimation(this.SIDE_WALK);
       }
       //Go right
     } else if (me.input.isKeyPressed('right')) {
@@ -135,8 +135,8 @@ game.Player = game.Character.extend({
       // update the entity velocity
       this.body.vel.x += this.body.accel.x * me.timer.tick;
       // change to the walking animation
-      if (!this.characterRenderable.isCurrentAnimation("sideWalk")) {
-        this.characterRenderable.setCurrentAnimation("sideWalk");
+      if (!this.characterRenderable.isCurrentAnimation(this.SIDE_WALK)) {
+        this.characterRenderable.setCurrentAnimation(this.SIDE_WALK);
       }
     }
     //Doesn't move on x axis
@@ -148,15 +148,15 @@ game.Player = game.Character.extend({
     if (me.input.isKeyPressed('up')) {
       this.body.vel.y -= this.body.accel.y * me.timer.tick;
       // change to the walking animation
-      if (!this.characterRenderable.isCurrentAnimation("upWalk") && !me.input.isKeyPressed('right') && !me.input.isKeyPressed('left')) {
-        this.characterRenderable.setCurrentAnimation("upWalk");
+      if (!this.characterRenderable.isCurrentAnimation(this.UP_WALK) && !me.input.isKeyPressed('right') && !me.input.isKeyPressed('left')) {
+        this.characterRenderable.setCurrentAnimation(this.UP_WALK);
       }
       //Go down
     } else if (me.input.isKeyPressed('down')) {
       this.body.vel.y += this.body.accel.y * me.timer.tick;
       // change to the walking animation
-      if (!this.characterRenderable.isCurrentAnimation("downWalk") && !me.input.isKeyPressed('right') && !me.input.isKeyPressed('left')) {
-        this.characterRenderable.setCurrentAnimation("downWalk");
+      if (!this.characterRenderable.isCurrentAnimation(this.DOWN_WALK) && !me.input.isKeyPressed('right') && !me.input.isKeyPressed('left')) {
+        this.characterRenderable.setCurrentAnimation(this.DOWN_WALK);
       }
       //Doesn't move on y axis
     } else {
