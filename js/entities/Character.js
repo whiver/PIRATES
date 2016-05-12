@@ -34,16 +34,17 @@ game.Character = me.Entity.extend({
       width: 30,
       height:32
     };
-    
+
     // call the constructor
     this._super(me.Entity, 'init', [x, y , settings]);
-    
+
     // Character's properties
     this.playerId = id;
     this.weapon = {};
     this.characterRenderable = this.renderable;
     this.attacking = false;
     this.hit = false;
+    this.treasures = [];
 
     // set the default horizontal & vertical speed (accel vector)
     this.body.setVelocity(2, 2);
@@ -131,7 +132,7 @@ game.Character = me.Entity.extend({
         // Player is not moving: we keep the same attack parameters
         attackAnimation = this.weapon.current.name;
       }
-      
+
       this.weapon.isRenderable = true;
 
       // Run the attack animation
@@ -147,7 +148,7 @@ game.Character = me.Entity.extend({
       this.weapon.setAnimationFrame(0);
     }
   },
-  
+
   /**
    * Hurts the player by dealing it some damages
    */
@@ -162,6 +163,15 @@ game.Character = me.Entity.extend({
   onCollision : function (response, other) {
     if(other instanceof game.Character){
       return false;
+    }
+    else if(other instanceof game.Treasure){
+      // Take the treasure
+      this.treasures.push(other);
+
+      // Debug log
+      if (me.game.HASH.debug === true) {
+        console.log('Player ' + this.playerId + ' took a treasure! (score -> ' + this.score() + ')');
+      }
     }
 
     // Make all other objects solid
@@ -179,12 +189,39 @@ game.Character = me.Entity.extend({
       console.info("Player " + this.playerId + " died.");
     }
 
+    // Make the treasures visible again
+    for(var i = 0; i < this.treasures.length; i++){
+      this.treasures[i].respawn();
+    }
+
+    // Empty the list
+    this.treasures = [];
+
     // TODO Add this animation
     //this.characterRenderable.setCurrentAnimation("die");
     this.pos.x = respawnX;
     this.pos.y = respawnY;
   },
-  
+
+  /**
+   * Get the character's score (calculated from his treasures' list)
+   * @return {number} the score
+   */
+  score: function () {
+    // No treasures
+    if(this.treasures.length < 1){
+      return 0;
+    }
+
+    var s = 0;
+
+    for(var i = 0; i < this.treasures.length; i++){
+      s += this.treasures[i].points;
+    }
+
+    return s;
+  },
+
   /**
    * FIXME: Due to a MelonJS bug, we must overwrite the Entity's update
    * method, since it directly calls those from Container, which causes

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="80" tilewidth="32" tileheight="32" nextobjectid="52">
- <tileset firstgid="1" name="Terrain" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="80" tilewidth="32" tileheight="32" nextobjectid="57">
+ <tileset firstgid="1" name="Terrain" tilewidth="32" tileheight="32" tilecount="1024">
   <image source="../img/map/terrain_atlas.png" width="1024" height="1024"/>
  </tileset>
  <layer name="landscape" width="80" height="80">
@@ -24,6 +24,47 @@
     <property name="frameheight" value="32"/>
     <property name="framewidth" value="32"/>
     <property name="image" value="chest"/>
+    <property name="points" value="10"/>
+   </properties>
+  </object>
+  <object id="52" name="treasure" x="1843.33" y="2138.67" width="32" height="32">
+   <properties>
+    <property name="frameheight" value="32"/>
+    <property name="framewidth" value="32"/>
+    <property name="image" value="chest"/>
+    <property name="points" value="5"/>
+   </properties>
+  </object>
+  <object id="53" name="treasure" x="1392" y="1074" width="32" height="32">
+   <properties>
+    <property name="frameheight" value="32"/>
+    <property name="framewidth" value="32"/>
+    <property name="image" value="chest"/>
+    <property name="points" value="10"/>
+   </properties>
+  </object>
+  <object id="54" name="treasure" x="612" y="1420" width="32" height="32">
+   <properties>
+    <property name="frameheight" value="32"/>
+    <property name="framewidth" value="32"/>
+    <property name="image" value="chest"/>
+    <property name="points" value="10"/>
+   </properties>
+  </object>
+  <object id="55" name="treasure" x="856" y="476" width="32" height="32">
+   <properties>
+    <property name="frameheight" value="32"/>
+    <property name="framewidth" value="32"/>
+    <property name="image" value="chest"/>
+    <property name="points" value="5"/>
+   </properties>
+  </object>
+  <object id="56" name="treasure" x="2028" y="472" width="32" height="32">
+   <properties>
+    <property name="frameheight" value="32"/>
+    <property name="framewidth" value="32"/>
+    <property name="image" value="chest"/>
+    <property name="points" value="5"/>
    </properties>
   </object>
  </objectgroup>

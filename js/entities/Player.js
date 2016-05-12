@@ -206,6 +206,15 @@ game.Player = game.Character.extend({
 
       return false;
     }
+    else if(other instanceof game.Treasure){
+      // Take the treasure
+      this.treasures.push(other);
+
+      // Debug log
+      if (me.game.HASH.debug === true) {
+        console.log('Player ' + this.playerId + ' took a treasure! (score -> ' + this.score() + ')');
+      }
+    }
 
     return true;
   }
