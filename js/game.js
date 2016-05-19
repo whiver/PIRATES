@@ -106,6 +106,12 @@ var game = {
       document.getElementsByClassName("overPanel")[0].style.display = "none";
       document.getElementsByClassName("MemberPanel")[0].style.display = "none"; 
     });
-  
+	
+	socket.on('infoDisconnect', function(){	  
+	  socket.disconnect();
+	  document.getElementsByClassName("overPanel")[0].style.display = "flex";
+	  document.getElementsByClassName("dialog")[0].innerHTML = "<h3> You have been disconnected </h3>";
+	});
+	
   }
 };

@@ -29,7 +29,8 @@
     constructor(){
       this.players = {};
       this.respawnPoints = [];
-
+	  this.isRunning = false;
+	  
       this.respawnPoints[0] = {x: 2048, y: 864};
       this.respawnPoints[1] = {x: 640, y: 704};
       this.respawnPoints[2] = {x: 608, y: 2048};
@@ -75,8 +76,8 @@
      * @param {int} id the player to remove
      */
     RemovePlayer(id){
-      if(this.player[id] !== undefined)
-        delete this.player[id];
+      if(this.players[id] !== undefined)
+	  { delete this.players[id]; }
     }
 
     /**
@@ -96,6 +97,24 @@
      */
     GetList(){
       return this.players;
+    }
+	
+	/**
+     * GetIsRunning - Get the state of game (InGame or not)
+     *
+     * @return {boolean}  current state of game
+     */
+    GetIsRunning(){
+      return this.isRunning;
+    }
+	
+	/**
+     * SetIsRunning - Set the new state of game (InGame or not)
+     *
+     * @param {boolean}  current state of game
+     */
+	SetIsRunning(newState){
+		this.isRunning = newState;
     }
 
   }

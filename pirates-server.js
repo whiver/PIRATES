@@ -49,7 +49,9 @@ app.use("/build", serveStatic(__dirname + '/build/'));
 var game = new Pirates.Game();
 var nbPlayers = 0;
 var nbReady = 0;
-var nbPlayersNeeded = 2;
+var nbPlayersNeeded = 3;
+// TODO (or not) Update minPlatersInGame, 2 has been chose randomly
+var minPlayersInGame = 2;
 var toUpdate = [];
 
 //-------------- Handle the client-server communication
@@ -58,22 +60,30 @@ io.on('connection', function (socket) {
   // At the connection, you receive the number of players needed to begin a game
   socket.emit('nbPlayersRequired', nbPlayersNeeded);
   // And you receive the list of players ready to play
-  socket.emit('memberConnected', game.GetList());
+  socket.emit('addMemberConnected', game.GetList());
 
   // Allow a player to join the game and set his pseudo
   socket.on('join', function (pseudo) {
     var idPlayer = game.AddPlayer(pseudo);
-
+	
+	// Save id in socket
+	socket.idPlayer = idPlayer;
+	
     if(idPlayer !== -1) {
       console.log('Player ' + pseudo + ' joined the game.');
       socket.idPlayer = idPlayer;
       
       // Send pseudo to the others players
-      io.emit('memberConnected', pseudo);
+      io.emit('addMemberConnected', pseudo);
 
       //Give an ID to the player
       socket.emit('initId', idPlayer);
       nbPlayers++;
+	  
+	  // ******* /!\ Dirty coding ****** 
+	  var player = game.Get(idPlayer);
+	  player.state = "Join";
+	  
     } else {
       socket.emit('pseudoError', 'alreadyGiven');
     }
@@ -93,6 +103,8 @@ io.on('connection', function (socket) {
     if(nbReady == nbPlayersNeeded){
       //Start the game for everyone
       io.emit('start');
+	  // ******* /!\ Dirty coding ****** If you have an other idea ..
+	  game.SetIsRunning(true);
     }
   });
   
@@ -147,17 +159,56 @@ io.on('connection', function (socket) {
 
   socket.on('disconnect', function() {
 
-    // Clean the game and wait for new players
-    console.log('Disconnection. Resetting the game.');
-
-    // TODO Send a message to alert disconnected clients
-    socket.leave();
-
-    game = new Pirates.Game();
-    nbPlayers = 0;
-    nbReady = 0;
-    nbPlayersNeeded = 2;
-    toUpdate = [];
+	var player = game.Get(socket.idPlayer);
+	var gameIsRunning = game.GetIsRunning();
+	
+	if(player != undefined) {
+		// If the game began and the number of player in game < number of player necessary
+		// Then we deconnect all the players
+		if(gameIsRunning == true && nbReady <= minPlayersInGame)
+		{
+			io.emit('infoDisconnect');
+			console.log('Disconnection in game of player ' + player.pseudo );
+			socket.disconnect();
+			nbPlayers--;
+			nbReady--;
+			game.RemovePlayer(player.id);
+			
+			// No need to restart a new game, but the id of player will increase, and create problem with respawn after 6 players	
+			if(nbPlayers==0){
+			game = new Pirates.Game();
+			nbPlayers = 0;
+			nbReady = 0;
+			toUpdate = [];
+			}
+			
+		}
+		// Else if the game began but there are still players enough
+		// Then we deconnect only the player concerned
+		else if(gameIsRunning == true && nbReady > minPlayersInGame)
+		{
+			game.RemovePlayer(player.id);
+			
+			console.log('Disconnection in game of player ' + player.pseudo );
+			nbPlayers--;
+			nbReady--;
+			socket.disconnect();
+		}
+		// Else if the game didn't begin and the player had join
+		// Then we remmove the player of the wainting list
+		else if(gameIsRunning == false && player.state == 'Join')
+		{
+			console.log('Disconnection of player ' + player.pseudo );
+			nbPlayers--;
+			player.state = 'None';
+			game.RemovePlayer(player.id);
+			io.emit('removeMemberConnected', player.pseudo);
+			socket.disconnect();
+		}
+		// Else the game didn't begin and the player had not join
+		else
+		{}
+	}
   });
 });
 

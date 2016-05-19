@@ -24,10 +24,10 @@
 
     <div class="MemberPanel">
       <div class="playersList">
-        <CENTER><TABLE width=500px height=200px border=0>
-          <TR><TD width=40% align=center>  <div id="frameList"> <h3> Players Ready </h3> </div> </TD><TD width=60% rowspan=2 align=left> <ol id="liste"></ol></TD></TR>
-          <TR><TD width=40% align=center> (Missing :  &nbsp <label id="counter"> </label> ) <div id="error"></div> </TD></TR>
-        </TABLE></CENTER>
+			<TABLE border=0>
+			<TR><TD width=40% align=center>  <div id="frameList"> <h3> Players Ready </h3> </div> </TD><TD width=60% rowspan=2 align=left> <ol id="liste"></ol></TD></TR>
+			<TR><TD width=40% align=center> (Missing :  &nbsp  <label id="counter"> </label> ) <div id="error"></div> </TD></TR>
+			</TABLE>
       </div>
     </div>
 
@@ -79,62 +79,7 @@
     });
     </script>
 
-    <script>
-    var button = document.getElementById("button");
-    var pseudo = document.getElementById("pseudo");
-    var counter = document.getElementById("counter");
-
-    function emitJoin(){
-      socket.emit("join", pseudo.value);
-    };
-
-    button.addEventListener("click", emitJoin);
-    pseudo.addEventListener("keyup", function(e){
-      if(e.keyCode === 13){
-        emitJoin();
-      }
-    });
-
-    socket.on('nbPlayersRequired', function(nbPlayersRequired){
-      counter.innerHTML = nbPlayersRequired;
-    });
-
-    socket.on('memberConnected', function(pseudo){
-
-      if (typeof(pseudo) == "string" )
-      {
-        var li = document.createElement('li');
-        li.innerHTML = pseudo;
-        document.getElementById('liste').appendChild(li);
-        counter.innerHTML -= 1;
-      }
-      else{
-        for(var i in pseudo) {
-          var p = pseudo[i];
-          var li = document.createElement('li');
-          li.innerHTML = p.pseudo;
-          document.getElementById('liste').appendChild(li);
-          counter.innerHTML -= 1;
-        }
-      }
-    });
-
-    socket.on('pseudoError', function(msg){
-      if(msg === 'alreadyGiven'){
-        var error = document.getElementById("error")
-        error.innerText = "Error : Pseudo already taken !";
-        error.style.display = "block";
-      }
-    });
-
-    // We need to know if the pseudo is already used before change label
-    socket.on('initId', function(){
-      document.getElementsByClassName("dialog")[0].innerHTML = "<h3> Awaiting players to begin the game </h3>";
-    });
-
-    </script>
-
-
-
+	<script type="text/javascript" src="js/launcher.js"></script>
+	
   </body>
 </html>
