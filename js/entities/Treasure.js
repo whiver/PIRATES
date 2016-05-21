@@ -23,15 +23,60 @@ game.Treasure = me.CollectableEntity.extend({
   /**
   * constructor
   */
-  init:function (x, y, settings) {
+  init:function (x, y, points, id) {
+    var settings = {
+      width: 32,
+      height: 32,
+      framewidth: 32,
+      frameheight: 32,
+      image: 'chest'
+    };
+    
     // call the constructor
     this._super(me.CollectableEntity, 'init', [x, y , settings]);
-    
+
+    // properties
+    this.points = points;
+    this.id = id;
+
     // define a basic walking animation (using all frames)
     this.renderable.addAnimation("closed",  [0]);
     this.renderable.addAnimation("opened",  [1]);
 
     this.renderable.setCurrentAnimation("closed");
+  },
+
+  // this function is called by the engine, when
+  // an object is touched by something (here collected)
+  onCollision : function (response, other) {
+    // do something when collected
+
+    if(other instanceof game.Player)
+      this.collect();
+
+    return false;
+  },
+
+  /**
+   * respawn - make the treasure appear again
+   */
+  respawn: function () {
+    // show it
+    this.isRenderable = true;
+
+    // make the treasure collectable
+    this.body.setCollisionMask(me.collision.types.PLAYER_OBJECT);
+  },
+  
+  /**
+   * collect - hide the treasure
+   */
+  collect: function() {
+    // make sure it cannot be collected "again"
+    this.body.setCollisionMask(me.collision.types.NO_OBJECT);
+
+    // hide it
+    this.isRenderable = false;
   }
 
 });

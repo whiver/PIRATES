@@ -65,6 +65,7 @@ var game = {
     
     //First, we wait for all the players to connect
     var players = {};
+    var treasures = [];
     var playerId;
 
     socket.on("initId", function(id){
@@ -74,8 +75,8 @@ var game = {
     });
 
     socket.on("init", function(param){
-      for(var i in param){
-        var p = param[i];
+      for(var i in param.players){
+        var p = param.players[i];
 
         if(p.id === playerId){
           players[p.id] = new game.Player(p.pos.x, p.pos.y, p.hp, p.id);
@@ -85,6 +86,12 @@ var game = {
         }
       }
 
+      for(var i=0; i < param.treasures.length; i++){
+        var t = param.treasures[i];
+        
+        treasures[i] = new game.Treasure(t.pos.x, t.pos.y, t.points, i);
+      }
+      
       socket.emit('ready');
     });
 
@@ -101,7 +108,7 @@ var game = {
       me.input.bindPointer(me.input.KEY.SPACE);
 
       // Start the game (pass 2 args (players & playerId) to the onResetEvent function of the play screen)
-      me.state.change(me.state.PLAY, players, playerId);
+      me.state.change(me.state.PLAY, players, playerId, treasures);
 
       document.getElementsByClassName("overPanel")[0].style.display = "none";
       document.getElementsByClassName("MemberPanel")[0].style.display = "none"; 

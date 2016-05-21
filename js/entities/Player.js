@@ -206,6 +206,9 @@ game.Player = game.Character.extend({
 
       return false;
     }
+    else if(other instanceof game.Treasure){
+      socket.emit('treasureTaken', { treasureId: other.id, playerId: this.playerId });
+    }
 
     return true;
   }

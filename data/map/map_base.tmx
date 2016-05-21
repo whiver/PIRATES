@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="80" tilewidth="32" tileheight="32" nextobjectid="52">
- <tileset firstgid="1" name="Terrain" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="80" tilewidth="32" tileheight="32" nextobjectid="58">
+ <tileset firstgid="1" name="Terrain" tilewidth="32" tileheight="32" tilecount="1024">
   <image source="../img/map/terrain_atlas.png" width="1024" height="1024"/>
  </tileset>
  <layer name="landscape" width="80" height="80">
@@ -19,13 +19,7 @@
   </data>
  </layer>
  <objectgroup name="entities">
-  <object id="51" name="treasure" x="1534.67" y="1668" width="32" height="32">
-   <properties>
-    <property name="frameheight" value="32"/>
-    <property name="framewidth" value="32"/>
-    <property name="image" value="chest"/>
-   </properties>
-  </object>
+  <object id="57" x="675.758" y="2424.24"/>
  </objectgroup>
  <layer name="objects_front_0" width="80" height="80">
   <data encoding="base64">
