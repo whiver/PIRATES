@@ -34,8 +34,7 @@
       };
     }
 
-
   }
 
-  exports.Treasure = Treasure;
+  module.exports = Treasure;
 })();

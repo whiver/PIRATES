@@ -19,7 +19,7 @@ game.PlayScreen = me.ScreenObject.extend({
   /**
    *  action to perform on state change
    */
-  onResetEvent: function(players, idPlayer) {
+  onResetEvent: function(players, idPlayer, treasures) {
     //Map init
     me.levelDirector.loadLevel("map_base", {
       flatten: false,
@@ -30,25 +30,29 @@ game.PlayScreen = me.ScreenObject.extend({
      * The container of all characters in the game, created in Tiled
      * @type {me.Container}
      */
-    this.playerLayer = me.game.world.getChildByName("entities")[0];
+    this.entitiesLayer = me.game.world.getChildByName("entities")[0];
 
     if (me.game.HASH.debug === true) {
-      console.assert(this.playerLayer !== undefined, 'No children named ' +
+      console.assert(this.entitiesLayer !== undefined, 'No children named ' +
         '"entities" found. The Tiled map must include such a layer to add ' +
         'the players to the game and the layer must not be empty.', this);
-      console.assert(this.playerLayer instanceof me.Container, 'The "entities" ' +
+      console.assert(this.entitiesLayer instanceof me.Container, 'The "entities" ' +
         'Tiled layer must be an object layer to allow adding players inside it.', this);
     }
 
     var t = this;
     this.players = players;
+    this.treasures = treasures;
     this.playerId = idPlayer;
 
     //Add the players
     for(var id in players){
-      this.playerLayer.addChild(players[id]);
+      this.entitiesLayer.addChild(players[id]);
     }
 
+    for(var i = 0; i < treasures.length; i++){
+      this.entitiesLayer.addChild(treasures[i]);
+    }
 
     //Emit first player data
     this.updatePayload = {};
@@ -114,11 +118,37 @@ game.PlayScreen = me.ScreenObject.extend({
       t.players[p.id].die(p.pos.x, p.pos.y);
       
       if (me.game.HASH.debug === true) {
-        if (p.id === this.playerId) {
+        if (p.id === t.playerId) {
           console.info("You died.");
         } else {
           console.info("Player " + p.id + " died.");
         }
+      }
+    });
+    
+    socket.on('treasuresRespawn', function(list){
+      for(i = 0; i < list.length; i++){
+        t.treasures[list[i]].respawn();
+      }
+    });
+    
+    /**
+     * Handle a treasure collection by a player
+     * @param {object} obj an object with 'player' the player id et 'treasure' the treasure id
+     */
+    socket.on('treasureCollected', function(obj){
+      if(obj.treasure > t.treasures.length) return;
+      
+      var treasure = t.treasures[obj.treasure];
+      
+      if(obj.player === t.playerId){
+        t.players[t.playerId].treasures.push(treasure);
+      }
+      
+      treasure.collect();
+      
+      if (me.game.HASH.debug === true) {
+        console.info('Player ' + t.playerId + ' took a treasure (score : ' + t.players[t.playerId].score() + ')');
       }
     });
     

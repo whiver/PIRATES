@@ -48,6 +48,7 @@
       this.defaultPos = {x: px, y: py};
       this.vel = {x: 0, y: 0};
       this.lastMaj = Date.now();
+      this.treasures = [];
 
       // Initialize the position with de default one
       this.pos = {};
@@ -149,6 +150,11 @@
       }
 
       this.vel = newVel;
+    }
+    
+    CollectTreasure(i, points){
+      this.treasures.push(i);
+      this.points += points;
     }
     //--------------------------------------------------------------------------
   }

@@ -82,8 +82,8 @@ io.on('connection', function (socket) {
   //Event received when the player have succesfully received is ID
   socket.on('initIdDone', function(){
     if(nbPlayers >= nbPlayersNeeded){
-      //Give the players list to everyone
-      io.emit('init', game.GetList());
+      //Give the players and treasures list to everyone
+      io.emit('init', { players: game.GetList(), treasures: game.treasures });
     }
   });
 
@@ -99,7 +99,7 @@ io.on('connection', function (socket) {
   socket.on('spawned', function (p) {
     var player = game.Get(socket.idPlayer);
     player.dead = false;
-    console.log("Player " + socket.pseudo + " respawned.");
+    console.log("Player " + player.pseudo + " respawned.");
   });
 
   socket.on("attack", function (targetId) {
@@ -113,6 +113,8 @@ io.on('connection', function (socket) {
     // Check if the target is dead
     if (target.dead) {
       io.emit("death", target);
+      game.resetPlayerTreasures(targetId);
+      io.emit("treasuresRespawn", game.getCollectableTreasures());
     }
 
     io.emit("attackConfirmation", {
@@ -144,6 +146,23 @@ io.on('connection', function (socket) {
       socket.broadcast.emit("update", player);
     }
   });
+  
+  socket.on('treasureTaken', function(message){
+    var treasure = game.GetTreasure(message.treasureId);
+    var player = game.Get(message.playerId);
+    
+    if(!treasure.collected){
+      treasure.collected = true;
+      
+      player.CollectTreasure(message.treasureId, treasure.points);
+      
+      //TODO: cheat ?
+      
+      io.emit('treasureCollected', { treasure: message.treasureId, player: message.playerId });
+      
+      console.log('Player ' + player.pseudo + ' took treasure ' + message.treasureId + ' (score : ' + player.points + ')');
+    }
+  })
 
   socket.on('disconnect', function() {
 

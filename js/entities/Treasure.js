@@ -23,12 +23,21 @@ game.Treasure = me.CollectableEntity.extend({
   /**
   * constructor
   */
-  init:function (x, y, settings) {
+  init:function (x, y, points, id) {
+    var settings = {
+      width: 32,
+      height: 32,
+      framewidth: 32,
+      frameheight: 32,
+      image: 'chest'
+    };
+    
     // call the constructor
     this._super(me.CollectableEntity, 'init', [x, y , settings]);
 
     // properties
-    this.points = settings.points;
+    this.points = points;
+    this.id = id;
 
     // define a basic walking animation (using all frames)
     this.renderable.addAnimation("closed",  [0]);
@@ -42,11 +51,8 @@ game.Treasure = me.CollectableEntity.extend({
   onCollision : function (response, other) {
     // do something when collected
 
-    // make sure it cannot be collected "again"
-    this.body.setCollisionMask(me.collision.types.NO_OBJECT);
-
-    // hide it
-    this.isRenderable = false;
+    if(other instanceof game.Player)
+      this.collect();
 
     return false;
   },
@@ -60,6 +66,17 @@ game.Treasure = me.CollectableEntity.extend({
 
     // make the treasure collectable
     this.body.setCollisionMask(me.collision.types.PLAYER_OBJECT);
+  },
+  
+  /**
+   * collect - hide the treasure
+   */
+  collect: function() {
+    // make sure it cannot be collected "again"
+    this.body.setCollisionMask(me.collision.types.NO_OBJECT);
+
+    // hide it
+    this.isRenderable = false;
   }
 
 });
