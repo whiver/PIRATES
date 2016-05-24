@@ -57,6 +57,9 @@ game.HUD.ScoreItem = me.Renderable.extend({
 
         // local copy of the global score
         this.score = -1;
+        
+        // create a font
+        this.font = new me.BitmapFont("32x32_font", 32);
     },
 
     /**
@@ -76,7 +79,7 @@ game.HUD.ScoreItem = me.Renderable.extend({
      * draw the score
      */
     draw : function (context) {
-        // draw it baby !
+        this.font.draw (context, game.data.score , this.pos.x, this.pos.y);
     }
 
 });

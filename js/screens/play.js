@@ -126,10 +126,15 @@ game.PlayScreen = me.ScreenObject.extend({
       }
     });
     
+    /**
+     * Make the specified treasures appear again
+     */
     socket.on('treasuresRespawn', function(list){
       for(i = 0; i < list.length; i++){
         t.treasures[list[i]].respawn();
       }
+      
+      game.data.score = t.players[t.playerId].score();
     });
     
     /**
@@ -143,6 +148,7 @@ game.PlayScreen = me.ScreenObject.extend({
       
       if(obj.player === t.playerId){
         t.players[t.playerId].treasures.push(treasure);
+        game.data.score = t.players[t.playerId].score();
       }
       
       treasure.collect();
@@ -177,6 +183,8 @@ game.PlayScreen = me.ScreenObject.extend({
 
       socket.emit('updatePlayer', {id: t.playerId, player: t.updatePayload});
     }, 100);
+
+    game.data.score = 0;
 
     // add our HUD to the game world
     this.HUD = new game.HUD.Container();
