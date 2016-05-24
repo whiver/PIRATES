@@ -32,7 +32,6 @@ body {
 .overPanel{
     height: 100%;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
     position: absolute;
     display: flex;
     justify-content: center;
@@ -72,8 +71,8 @@ body {
 .MemberPanel{
     height: 50%;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
     position: absolute;
+    bottom: 0;
     display: flex;
     justify-content: center;
     align-items: center;
