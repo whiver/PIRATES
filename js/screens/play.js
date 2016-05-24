@@ -152,6 +152,20 @@ game.PlayScreen = me.ScreenObject.extend({
       }
     });
     
+	/**
+     * Handle disconnection
+     * 
+     */
+    socket.on('requestDisconnect', function(p){
+	    if (p.id === t.playerId) {
+          console.info("You disconnect");
+        } else {
+          console.info("Player " + p.id + " disconnect.");
+        }	
+		t.entitiesLayer.removeChild(players[p.id]);
+    });
+	
+	
     // Send the player's informations to the server
     setInterval(function () {
       t.updatePayload.x = t.players[t.playerId].pos._x;

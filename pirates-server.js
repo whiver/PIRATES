@@ -117,23 +117,29 @@ io.on('connection', function (socket) {
   socket.on("attack", function (targetId) {
     var player = game.Get(socket.idPlayer);
     var target = game.Get(targetId);
-    console.log("Player " + player.pseudo + " attacked " + target.pseudo);
+	
+	if(target != undefined) // If is not dead
+	{
+		console.log("Player " + player.pseudo + " attacked " + target.pseudo);
 
-    // TODO check attacks to avoid cheating
-    target.hurt();
+		// TODO check attacks to avoid cheating
+		target.hurt();
 
-    // Check if the target is dead
-    if (target.dead) {
-      io.emit("death", target);
-      game.resetPlayerTreasures(targetId);
-      io.emit("treasuresRespawn", game.getCollectableTreasures());
-    }
+		// Check if the target is dead
+		if (target.dead) {
+		  io.emit("death", target);
+		  game.resetPlayerTreasures(targetId);
+		  io.emit("treasuresRespawn", game.getCollectableTreasures());
+		}
 
-    io.emit("attackConfirmation", {
-      target: target.id,
-      from: player.id,
-      hp: target.hp
-    });
+		io.emit("attackConfirmation", {
+		  target: target.id,
+		  from: player.id,
+		  hp: target.hp
+		});
+	
+	}
+	
   });
 
   /**
@@ -187,6 +193,7 @@ io.on('connection', function (socket) {
 		if(gameIsRunning == true && nbReady <= minPlayersInGame)
 		{
 			io.emit('infoDisconnect');
+			io.emit('requestDisconnect', player);
 			console.log('Disconnection in game of player ' + player.pseudo );
 			socket.disconnect();
 			nbPlayers--;
@@ -206,6 +213,7 @@ io.on('connection', function (socket) {
 		// Then we deconnect only the player concerned
 		else if(gameIsRunning == true && nbReady > minPlayersInGame)
 		{
+			io.emit('requestDisconnect', player);
 			game.RemovePlayer(player.id);
 			
 			console.log('Disconnection in game of player ' + player.pseudo );
